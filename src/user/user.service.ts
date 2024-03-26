@@ -1,14 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserRegisterInputDto, VerifyEmailInputDto } from './dto/UserInput.dto';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { onHashPassword } from 'src/common/utils/onHashPassword';
 import { RedisService } from 'src/redis/redis.service';
-import * as otpGenerator from 'otp-generator';
+import otpGenerator from 'otp-generator';
 import { MailerService } from 'src/mailer/mailer.service';
-import { MessageOutput } from 'src/common/dto/CommonOutput.dto';
+import { MessageOutput, SuccessOutput } from 'src/common/dto/CommonOutput.dto';
 
 @Injectable()
 export class UserService {
@@ -39,7 +38,6 @@ export class UserService {
     }
   }
 
-
   async storeAndSendOTP(email: string, otp: string): Promise<void> {
     try {
       console.log(`Stored OTP for ${email}: ${otp} (placeholder)`);
@@ -51,13 +49,36 @@ export class UserService {
     }
   }
 
-  verifyEmail(input: VerifyEmailInputDto) {}
+  async verifyEmail(input: VerifyEmailInputDto): Promise<SuccessOutput> {
+    try {
+      await this.validateOTP(input.email, input.otp);
+
+      // If OTP is validated successfully, update verifyEmail to true
+      await this.updateVerifyEmailStatus(input.email);
+
+      return { isSuccess: true };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async updateVerifyEmailStatus(email: string): Promise<void> {
+    try {
+      await this.catModel.findOneAndUpdate({ email }, { $set: { verifyEmail: true } });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 
   async validateOTP(email: string, otp: string) {
-    const result = await this.redisService.getValueFromTempStore(email);
+    try {
+      const result = await this.redisService.getValueFromTempStore(email);
 
-    if (result !== otp) {
-      throw new Error(
+      if (result !== otp) {
+        throw new BadRequestException('Invalid OTP for ' + email);
+      }
+    } catch (error) {
+      throw new Error(error);
     }
   }
 }

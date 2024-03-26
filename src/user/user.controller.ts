@@ -15,9 +15,4 @@ export class UserController {
   verifyEmail(@Body() input: VerifyEmailInputDto) {
     return this.userService.verifyEmail(input);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
 }
