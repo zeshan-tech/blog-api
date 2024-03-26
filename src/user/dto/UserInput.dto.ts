@@ -13,3 +13,13 @@ export class UserRegisterInputDto {
   @IsStrongPassword()
   password: string;
 }
+
+export class VerifyEmailInputDto {
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  otp: string;
+}
