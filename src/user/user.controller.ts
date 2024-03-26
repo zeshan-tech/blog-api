@@ -15,4 +15,10 @@ export class UserController {
   verifyEmail(@Body() input: VerifyEmailInputDto) {
     return this.userService.verifyEmail(input);
   }
+
+  // login
+  // delete user
+  // change password
+  // change email
+  // change fullname
 }
