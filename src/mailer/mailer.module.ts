@@ -22,5 +22,6 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
   ],
 
   providers: [MailerService],
+  exports: [MailerService],
 })
 export class MailerModule {}
