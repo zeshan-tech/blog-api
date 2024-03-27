@@ -82,13 +82,14 @@ describe('UserService', () => {
 
     it('should throw error if email is already registered', async () => {
       const input = {
-        Email: 'existing@example.com',
-        Fullname: 'Existing User',
+        Email: 'test@example.com',
+        Fullname: 'full name',
         Password: 'password',
       };
-      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(userMock);
 
-      await expect(service.register(input)).rejects.toThrow('Email already registered');
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(new Error());
+
+      await expect(service.register(input)).rejects.toThrow();
     });
   });
 

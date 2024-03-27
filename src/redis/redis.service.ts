@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class RedisService {
-  constructor(@InjectRedis() private readonly redisClient: Redis) {}
+  constructor(@InjectRedis() private redisClient: Redis) {}
 
   async storeValueInTempStore(value: any, key: string, ttl = 10000, override = false): Promise<string> {
     try {
