@@ -71,3 +71,11 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+
+is you getting this error
+- error getting credentials - err: exec: "docker-credential-desktop": executable file not found in $PATH, out
+ then 
+sudo vim ~/.docker/config.json
+
+rename "credsStore" to "credStore"

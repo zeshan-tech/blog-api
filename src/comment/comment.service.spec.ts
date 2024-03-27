@@ -55,6 +55,14 @@ describe('CommentService', () => {
       expect(result).toHaveLength(1);
       expect(result[0].text).toEqual(commentMock.text);
     });
+
+    it('should throw an error if error to retrieve comments by post _id', async () => {
+      const postId = '100';
+      jest.spyOn(mockCommentModel, 'find').mockRejectedValueOnce(new Error());
+
+      // Act & Assert
+      await expect(service.getCommentsByPostId(postId)).rejects.toThrow();
+    });
   });
 
   describe('createComment', () => {
@@ -88,12 +96,21 @@ describe('CommentService', () => {
       // Assertion
       expect(result.isSuccess).toBe(true);
     });
+
+    it('should throw an error if fails to delete comment', async () => {
+      const userId = '100';
+      const commentId = '100';
+      jest.spyOn(mockCommentModel, 'findOneAndDelete').mockRejectedValueOnce(new Error());
+
+      await expect(service.deleteComment(commentId, userId)).rejects.toThrow();
+      expect(mockCommentModel.findOneAndDelete).toHaveBeenCalledWith({ _id: commentId, user: userId });
+    });
   });
 
   describe('updateComment', () => {
     it('should update a comment', async () => {
       const commentId = '100';
-      const userId = 'user_id';
+      const userId = '100';
       const input: UpdateCommentInputDto = {
         Text: 'Test comment',
         PostId: '100',
@@ -105,6 +122,20 @@ describe('CommentService', () => {
 
       // Assertion
       expect(result.isSuccess).toBe(true);
+    });
+
+    it('should throw an error if error to update a comment', async () => {
+      // Arrange
+      const commentId = '100';
+      const userId = 'user_id';
+      const input: UpdateCommentInputDto = {
+        Text: 'Test comment',
+        PostId: '100',
+      };
+      jest.spyOn(mockCommentModel, 'findOneAndUpdate').mockRejectedValueOnce(new Error());
+
+      // Act & Assert
+      await expect(service.updateComment(input, commentId, userId)).rejects.toThrow();
     });
   });
 });

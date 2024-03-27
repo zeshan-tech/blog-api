@@ -6,6 +6,7 @@ const logger = new Logger('main.ts');
 const port = process.env.PORT || 8080;
 
 async function bootstrap() {
+  logger.log(`App init`);
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: true, whitelist: true }));

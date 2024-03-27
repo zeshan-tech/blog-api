@@ -1,71 +1,28 @@
-# version: '3.8'
-
-# services:
-#   nest-backend:
-#     container_name: quillpad
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#     ports:
-#       - '8080:8080'
-#     networks:
-#       - backend_network
-#     volumes:
-#       - .:/usr/src/app
-#       - /usr/src/app/node_modules
-#     restart: unless-stopped
-
-#   mongo:
-#     image: mongo:latest
-#     restart: always
-#     environment:
-#       MONGO_INITDB_ROOT_USERNAME: root
-#       MONGO_INITDB_ROOT_PASSWORD: example
-#     ports:
-#       - '27017:27017'
-#     networks:
-#       - backend_network
-
-# networks:
-#   backend_network:
-#     driver: bridge
-  # app:
-  #   build: .
-  #   ports:
-  #     - ${PORT}:${PORT}
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - node_modules:/usr/src/app/node_modules
-  #   environment:
-  #     - MONGO_URI=mongodb://db:27017/quillpad
-  #     - NODE_ENV=development
-  #     - PORT=8080
-
 version: '3.8'
 
 services:
-
-  mongo:
-    image: mongo:latest
-    restart: always
-    container_name: mongo
+  nestjs:
+    build: .
     ports:
-      - '27017:27017'
+      - "${PORT}:8080"
+    environment:
+      - PORT=${PORT}
+      - SALT_ROUND=${SALT_ROUND}
+      - SMTP_APP_PASSWORD=${SMTP_APP_PASSWORD}
+      - SMTP_APP_EMAIL=${SMTP_APP_EMAIL}
+      - SMTP_APP_HOST=${SMTP_APP_HOST}
+      - SMTP_APP_NAME=${SMTP_APP_NAME}
+      - REDIS_URI=${REDIS_URI}
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
     volumes:
       - mongodb_data:/data/db
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: quillpad
-  #   environment:
-  #     PORT: ${PORT}
-  #     SALT_ROUND: ${SALT_ROUND}
-  #     SMTP_APP_PASSWORD: ${SMTP_APP_PASSWORD}
-  #     SMTP_APP_NAME: ${SMTP_APP_NAME}
-  #     REDIS_URI: ${REDIS_URI}
-  #   ports:
-  #     - ${PORT}:${PORT}
-  #   depends_on:
-  #     - mongo
+volumes:
+  mongodb_data:
