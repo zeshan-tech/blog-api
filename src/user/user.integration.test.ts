@@ -1,5 +1,4 @@
 import { TestServer } from '../test/test.server';
-import * as request from 'supertest';
 import user from '../test/data/user';
 import { UserModule } from '../user/user.module';
 import { Model } from 'mongoose';
@@ -7,6 +6,7 @@ import { User } from '../user/schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { ChangeEmailInputDto, LoginInputDto, UpdateUserInputDto, UserRegisterInputDto } from './dto/UserInput.dto';
 import { v4 as uuid } from 'uuid';
+import * as request from 'supertest';
 
 describe('PostController (Integration)', () => {
   const server = new TestServer();
