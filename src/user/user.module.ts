@@ -6,11 +6,12 @@ import { User, UserSchema } from './schema/user.schema';
 import { RedisModule } from 'src/redis/redis.module';
 import { MailerModule } from 'src/mailer/mailer.module';
 import { AuthModule } from '../auth/auth.module';
+import { IsUniqueEmailConstraint } from '../decorator/is-unique-email.decorator';
 
 @Module({
   imports: [forwardRef(() => AuthModule), MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]), RedisModule, MailerModule],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, IsUniqueEmailConstraint],
   exports: [UserService],
 })
 export class UserModule {}

@@ -67,20 +67,20 @@ describe('UserController', () => {
     });
   });
 
-  // describe('login', () => {
-  //   it('should login user', async () => {
-  //     const input: LoginInputDto = {
-  //       Email: 'test@example.com',
-  //       Password: 'password123',
-  //     };
+  describe('login', () => {
+    it('should login user', async () => {
+      const input: LoginInputDto = {
+        Email: 'test@example.com',
+        Password: 'password123',
+      };
 
-  //     jest.spyOn(userServiceMock, 'login').mockResolvedValueOnce(userMock);
-  //     jest.spyOn(authServiceMock, 'signToken').mockResolvedValueOnce('token');
+      jest.spyOn(userServiceMock, 'login').mockResolvedValueOnce(userMock);
+      jest.spyOn(authServiceMock, 'signToken').mockResolvedValueOnce('token');
 
-  //     const result = await controller.login(input);
-  //     expect(result.token).toEqual('token');
-  //   });
-  // });
+      const result = await controller.login(input);
+      expect(result.token).toEqual('token');
+    });
+  });
 
   describe('verifyEmail', () => {
     it('should verify email', async () => {

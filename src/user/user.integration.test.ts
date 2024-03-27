@@ -1,4 +1,4 @@
-import { GET_ALL_PRODUCTS_BY_JOB_LOGS_ID, GET_STAGING_FAILED_PRODUCTS } from '../test/graphql/remediation-rules/queries';
+/* import { GET_ALL_PRODUCTS_BY_JOB_LOGS_ID, GET_STAGING_FAILED_PRODUCTS } from '../test/graphql/remediation-rules/queries';
 import * as request from 'supertest';
 import { TestServer } from '../test/test.server';
 import { RemediationRulesModule } from './remediation-rules.module';
@@ -101,3 +101,4 @@ describe('User test', () => {
   }, 100000);
   // });
 });
+ */

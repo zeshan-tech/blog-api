@@ -7,11 +7,9 @@ import { RedisModule as NRedisModule, RedisModuleOptions } from '@liaoliaots/nes
   imports: [
     NRedisModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService): Promise<RedisModuleOptions> => {
-        return {
-          config: { url: configService.get<string>('REDIS_URI') },
-        };
-      },
+      useFactory: async (configService: ConfigService): Promise<RedisModuleOptions> => ({
+        config: { url: configService.get<string>('REDIS_URI') },
+      }),
       inject: [ConfigService],
     }),
   ],

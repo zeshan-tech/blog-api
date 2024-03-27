@@ -12,7 +12,7 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://mongodb:27017/posts'),
+    MongooseModule.forRoot('mongodb://127.0.0.1:27017/posts'),
     ConfigModule.forRoot({
       isGlobal: true,
     }),

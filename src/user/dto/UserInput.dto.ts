@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
+import { IsUniqueEmail } from '../../decorator/is-unique-email.decorator';
 
 export class UserRegisterInputDto {
   @IsNotEmpty()
@@ -7,6 +8,7 @@ export class UserRegisterInputDto {
 
   @IsNotEmpty()
   @IsEmail()
+  @IsUniqueEmail()
   Email: string;
 
   @IsNotEmpty()
@@ -47,6 +49,7 @@ export class ChangePasswordInputDto {
 export class ChangeEmailInputDto {
   @IsNotEmpty()
   @IsString()
+  @IsUniqueEmail()
   NewEmail: string;
 
   @IsNotEmpty()

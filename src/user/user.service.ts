@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserRegisterInputDto, VerifyEmailInputDto, ChangePasswordInputDto, ChangeEmailInputDto, LoginInputDto, UpdateUserInputDto } from './dto/UserInput.dto';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
@@ -15,11 +15,6 @@ export class UserService {
 
   async register(input: UserRegisterInputDto): Promise<MessageOutput> {
     try {
-      const userExist = await this.userModel.findOne({ email: input.Email });
-      if (userExist) {
-        throw new ConflictException('Email already registered');
-      }
-
       const user: Partial<User> = {
         email: input.Email,
         fullname: input.Fullname,

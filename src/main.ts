@@ -1,15 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { useContainer } from 'class-validator';
 
 const logger = new Logger('main.ts');
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 
 async function bootstrap() {
-  logger.log(`App init`);
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe({ forbidUnknownValues: true, whitelist: true }));
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.enableCors();
 
