@@ -6,7 +6,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import { MailerService } from '../mailer/mailer.service';
 import { RedisService } from '../redis/redis.service';
 import { onHashPassword } from '../common/utils/bcrypt';
-import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 // Mocking dependencies
 const userModelMock = {
@@ -224,8 +223,8 @@ describe('UserService', () => {
       // Arrange
       const userId = 'validUserId';
       const input = { Fullname: 'New Name' };
-      const user = { _id: userId, email: 'example@example.com', fullname: 'Old Name' };
-      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(user);
+
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(userMock);
       jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
 
       // Act
@@ -241,6 +240,7 @@ describe('UserService', () => {
       // Arrange
       const userId = 'invalidUserId';
       const input = { Fullname: 'New Name' };
+
       jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
 
       // Act & Assert
@@ -253,14 +253,14 @@ describe('UserService', () => {
     it('should get user by email', async () => {
       // Arrange
       const email = 'example@example.com';
-      const user = { _id: 'validUserId', email, fullname: 'Example User' };
-      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(user);
+
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(userMock);
 
       // Act
       const result = await service.getByEmail(email);
 
       // Assert
-      expect(result).toEqual(user);
+      expect(result).toEqual(userMock);
       expect(userModelMock.findOne).toHaveBeenCalledWith({ email });
     });
 
@@ -279,14 +279,14 @@ describe('UserService', () => {
     it('should get user by id', async () => {
       // Arrange
       const userId = 'validUserId';
-      const user = { _id: userId, email: 'example@example.com', fullname: 'Example User' };
-      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(user);
+
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(userMock);
 
       // Act
       const result = await service.getUserById(userId);
 
       // Assert
-      expect(result).toEqual(user);
+      expect(result).toEqual(userMock);
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
 
@@ -304,8 +304,8 @@ describe('UserService', () => {
   describe('updateVerifyEmailStatus', () => {
     it('should update verifyEmail status for given email', async () => {
       // Arrange
-      const email = 'example@example.com';
-      jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
+      const email = 'test@example.com';
+      jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(userMock);
 
       // Act
       await service.updateVerifyEmailStatus(email);
@@ -314,7 +314,6 @@ describe('UserService', () => {
     });
 
     it('should throw Error', async () => {
-      // Arrange
       const email = 'invalid@example.com';
       jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
 
@@ -326,7 +325,7 @@ describe('UserService', () => {
   describe('validateOTP', () => {
     it('should validate OTP for given email', async () => {
       // Arrange
-      const email = 'example@example.com';
+      const email = 'test@example.com';
       const otp = '123456';
       jest.spyOn(redisServiceMock, 'getValueFromTempStore').mockResolvedValueOnce(otp);
 
@@ -340,7 +339,7 @@ describe('UserService', () => {
 
     it('should throw Error', async () => {
       // Arrange
-      const email = 'example@example.com';
+      const email = 'test@example.com';
       const otp = 'invalidOTP';
       jest.spyOn(redisServiceMock, 'getValueFromTempStore').mockResolvedValueOnce('validOTP');
 
