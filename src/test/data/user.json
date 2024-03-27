@@ -1,0 +1,14 @@
+[
+    {
+        "fullname": "fullname",
+        "email": "test@example.com",
+        "password": "password",
+        "emailVerified": false
+    },
+    {
+        "fullname": "fullname",
+        "email": "test@example.com",
+        "password": "password",
+        "emailVerified": false
+    }
+]
