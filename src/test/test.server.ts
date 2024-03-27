@@ -1,37 +1,40 @@
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { TokenManager } from './token.manager';
+import { AuthManager } from './token.manager';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserController } from 'src/user/user.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { User, UserSchema } from '../user/schema/user.schema';
+import { Model } from 'mongoose';
 
 export class TestServer {
   public authToken: string;
   public app: INestApplication;
-  public tokenManager: TokenManager;
+  public authManager: AuthManager;
   public httpServer: any;
-
-  private readonly logger = new Logger(TokenManager.name);
-  constructor(private readonly userController: UserController) {}
 
   async init(modules: any[]): Promise<void> {
     const moduleFixture = await Test.createTestingModule({
       imports: [
-        MongooseModule.forRoot('mongodb://127.0.0.1:27017/posts'),
+        JwtModule.register({
+          global: true,
+          secret: 'jwtConstants.secret',
+          signOptions: { expiresIn: '1d' },
+        }),
+        MongooseModule.forRoot('mongodb://127.0.0.1:27017/test'),
         ConfigModule.forRoot({
           isGlobal: true,
         }),
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
         ...modules,
       ],
+      controllers: [],
+      providers: [AuthManager],
     }).compile();
 
     this.app = moduleFixture.createNestApplication();
-    await this.app.init();
-    this.tokenManager = moduleFixture.get<TokenManager>(TokenManager);
-
-    this.app = moduleFixture?.createNestApplication();
     this.httpServer = await this.app.getHttpServer();
-    this.tokenManager = moduleFixture.get<TokenManager>(TokenManager);
+    this.authManager = moduleFixture.get<AuthManager>(AuthManager);
     this.app.enableCors();
     await this.app.init();
   }
@@ -44,15 +47,11 @@ export class TestServer {
     await this.init(modules);
   }
 
-  async insertIntoTable(tableName: string, data: any) {}
-
-  async retrieveToken() {
-    const input = {
-      Email: process.env.TEST_USER_EMAIL,
-      Password: process.env.TEST_USER_PASSWORd,
-    };
-    const { token } = await this.userController.login(input);
-    this.logger.log(token);
-    this.authToken = token;
+  async insertTestData<T>(UserModel: Model<T>, data: Record<string, any>): Promise<T[]> {
+    try {
+      return (await UserModel.insertMany(data)) as T[];
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
