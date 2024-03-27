@@ -29,7 +29,7 @@ describe('UserController', () => {
       };
 
       const result = await controller.register(input);
-      expect(result).toBeDefined();
+      expect(typeof result.message).toEqual('string');
     });
   })
 });
