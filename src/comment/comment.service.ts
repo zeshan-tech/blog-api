@@ -50,7 +50,7 @@ export class CommentService {
 
   async updateComment(input: UpdateCommentInputDto, commentId: string, userId: string): Promise<SuccessOutput> {
     try {
-      await this.commentModel.findOneAndUpdate({ _id: commentId, user: userId }, { text: input.Text, post: input.PostId });
+      await this.commentModel.findOneAndUpdate({ _id: commentId, user: userId }, { text: input.Text });
 
       return { isSuccess: true };
     } catch (error) {

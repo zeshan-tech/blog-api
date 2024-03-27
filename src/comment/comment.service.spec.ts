@@ -113,7 +113,6 @@ describe('CommentService', () => {
       const userId = '100';
       const input: UpdateCommentInputDto = {
         Text: 'Test comment',
-        PostId: '100',
       };
 
       jest.spyOn(mockCommentModel, 'findOneAndUpdate').mockResolvedValue(commentMock as any);
@@ -130,8 +129,8 @@ describe('CommentService', () => {
       const userId = 'user_id';
       const input: UpdateCommentInputDto = {
         Text: 'Test comment',
-        PostId: '100',
       };
+
       jest.spyOn(mockCommentModel, 'findOneAndUpdate').mockRejectedValueOnce(new Error());
 
       // Act & Assert

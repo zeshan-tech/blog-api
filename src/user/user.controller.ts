@@ -28,25 +28,25 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Delete()
-  deleteUser(@CurrentUser() user: CurrentUserType) {
-    return this.userService.deleteUser(user._id);
+  deleteUser(@CurrentUser() currentUser: CurrentUserType) {
+    return this.userService.deleteUser(currentUser._id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('change-password')
-  changePassword(@Body() input: ChangePasswordInputDto, @CurrentUser() user: CurrentUserType) {
-    return this.userService.changePassword(input, user._id);
+  changePassword(@Body() input: ChangePasswordInputDto, @CurrentUser() currentUser: CurrentUserType) {
+    return this.userService.changePassword(input, currentUser._id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('change-email')
-  changeEmail(@Body() input: ChangeEmailInputDto, @CurrentUser() user: CurrentUserType) {
-    return this.userService.changeEmail(input, user._id);
+  changeEmail(@Body() input: ChangeEmailInputDto, @CurrentUser() currentUser: CurrentUserType) {
+    return this.userService.changeEmail(input, currentUser._id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Put('update')
-  updateUser(@Body() input: UpdateUserInputDto, @CurrentUser() user: CurrentUserType) {
-    return this.userService.updateUser(input, user._id);
+  updateUser(@Body() input: UpdateUserInputDto, @CurrentUser() currentUser: CurrentUserType) {
+    return this.userService.updateUser(input, currentUser._id);
   }
 }

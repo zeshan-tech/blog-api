@@ -14,9 +14,9 @@ export const CurrentUser = createParamDecorator(async (_data: unknown, context: 
 
   const decodedData = jwtService.decode(token);
 
-  const user: CurrentUserType = {
+  const currentUser: CurrentUserType = {
     _id: decodedData['_id'],
     email: decodedData['email'],
   };
-  return user;
+  return currentUser;
 });

@@ -2,8 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { ChangeEmailInputDto, ChangePasswordInputDto, LoginInputDto, UpdateUserInputDto, UserRegisterInputDto, VerifyEmailInputDto } from './dto/UserInput.dto';
-import { RedisService } from '../redis/redis.service';
-import { MailerService } from '../mailer/mailer.service';
 import { AuthService } from '../auth/auth.service';
 import { Types } from 'mongoose';
 import { User } from './schema/user.schema';
@@ -24,7 +22,7 @@ const authServiceMock = {
   signToken: jest.fn(),
 };
 
-describe('UserController', () => {
+describe('User Controller', () => {
   let controller: UserController;
   let userMock: Partial<User>;
 
@@ -43,8 +41,6 @@ describe('UserController', () => {
       controllers: [UserController],
       providers: [
         { provide: UserService, useValue: userServiceMock },
-        { provide: RedisService, useValue: {} },
-        { provide: MailerService, useValue: {} },
         { provide: AuthService, useValue: {} },
       ],
     }).compile();
@@ -107,11 +103,11 @@ describe('UserController', () => {
   describe('changePassword', () => {
     it('should change password', async () => {
       const input: ChangePasswordInputDto = { Password: 'password', NewPassword: 'password' };
-      const user: CurrentUserType = { email: 'test@example.com', _id: '100' };
+      const currentUser: CurrentUserType = { email: 'test@example.com', _id: '100' };
 
       jest.spyOn(userServiceMock, 'changePassword').mockResolvedValueOnce({ isSuccess: true });
 
-      const result = await controller.changePassword(input, user);
+      const result = await controller.changePassword(input, currentUser);
       expect(result.isSuccess).toBe(true);
     });
   });
@@ -119,11 +115,11 @@ describe('UserController', () => {
   describe('changeEmail', () => {
     it('should change email', async () => {
       const input: ChangeEmailInputDto = { Password: 'password', NewEmail: 'test@example.com' };
-      const user: CurrentUserType = { email: 'test@example.com', _id: '100' };
+      const currentUser: CurrentUserType = { email: 'test@example.com', _id: '100' };
 
       jest.spyOn(userServiceMock, 'changeEmail').mockResolvedValueOnce({ message: 'test message' });
 
-      const result = await controller.changeEmail(input, user);
+      const result = await controller.changeEmail(input, currentUser);
       expect(result.message).toBe('test message');
     });
   });
@@ -131,11 +127,11 @@ describe('UserController', () => {
   describe('updateUser', () => {
     it('should update user', async () => {
       const input: UpdateUserInputDto = { Fullname: 'test name' };
-      const user: CurrentUserType = { email: 'test@example.com', _id: '100' };
+      const currentUser: CurrentUserType = { email: 'test@example.com', _id: '100' };
 
       jest.spyOn(userServiceMock, 'updateUser').mockResolvedValueOnce({ isSuccess: true });
 
-      const result = await controller.updateUser(input, user);
+      const result = await controller.updateUser(input, currentUser);
       expect(result.isSuccess).toBe(true);
     });
   });

@@ -18,8 +18,4 @@ export class UpdateCommentInputDto {
   @IsOptional()
   @IsString()
   Text: string;
-
-  @IsOptional()
-  @IsString()
-  PostId: string;
 }
