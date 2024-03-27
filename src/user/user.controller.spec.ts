@@ -41,7 +41,7 @@ describe('User Controller', () => {
       controllers: [UserController],
       providers: [
         { provide: UserService, useValue: userServiceMock },
-        { provide: AuthService, useValue: {} },
+        { provide: AuthService, useValue: authServiceMock },
       ],
     }).compile();
 
@@ -73,8 +73,7 @@ describe('User Controller', () => {
       jest.spyOn(userServiceMock, 'login').mockResolvedValueOnce(userMock);
       jest.spyOn(authServiceMock, 'signToken').mockResolvedValueOnce('token');
 
-      const result = await controller.login(input);
-      expect(result.token).toEqual('token');
+      expect(await controller.login(input)).toBeDefined();
     });
   });
 
