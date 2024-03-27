@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Delete, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Delete, Patch, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserRegisterInputDto, VerifyEmailInputDto, ChangePasswordInputDto, ChangeEmailInputDto, UpdateUserInputDto, LoginInputDto } from './dto/UserInput.dto';
 import { AuthService } from '../auth/auth.service';
