@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserRegisterInputDto, VerifyEmailInputDto, ChangePasswordInputDto, ChangeEmailInputDto, LoginInputDto, UpdateUserInputDto } from './dto/UserInput.dto';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
@@ -86,7 +86,7 @@ export class UserService {
       }
 
       const isMatched = onComparePassword(user.password, input.Password);
-      if (!isMatched) throw new NotFoundException('Invalid credentials specified');
+      if (!isMatched) throw new UnauthorizedException('Invalid credentials specified');
 
       const otp = onGenerateOTP(6);
       await this.storeAndSendOTP(input.NewEmail, otp);

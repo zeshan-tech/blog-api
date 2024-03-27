@@ -6,7 +6,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { MailerService } from '../mailer/mailer.service';
 import { RedisService } from '../redis/redis.service';
 import { onHashPassword } from '../common/utils/bcrypt';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 // Mocking dependencies
 const userModelMock = {
@@ -155,43 +155,194 @@ describe('UserService', () => {
 
   describe('changeEmail', () => {
     it('should change user email and send verification OTP', async () => {
-      // Test implementation
+      const userId = 'validUserId';
+      const input = { NewEmail: 'new@example.com', Password: 'password' };
+
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce({
+        ...userMock,
+        password: await onHashPassword(input.Password),
+      });
+      jest.spyOn(service, 'storeAndSendOTP').mockResolvedValueOnce(undefined);
+      jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
+
+      const result = await service.changeEmail(input, userId);
+
+      // Assert
+      expect(result).toEqual(expect.objectContaining({ message: expect.any(String) }));
+      expect(userModelMock.findOneAndUpdate).toHaveBeenCalled();
+      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
+      expect(service.storeAndSendOTP).toHaveBeenCalledWith(input.NewEmail, expect.any(String));
+    });
+
+    it('should throw NotFoundException for invalid user id or credentials', async () => {
+      const userId = 'invalidUserId';
+      const input = { NewEmail: 'new@example.com', Password: 'password' };
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
+
+      // Act & Assert
+      await expect(service.changeEmail(input, userId)).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('changePassword', () => {
     it('should change user password with valid credentials', async () => {
-      // Test implementation
+      // Arrange
+      const userId = 'validUserId';
+      const input = { Password: 'oldPassword', NewPassword: 'newPassword' };
+      const user = { _id: userId, email: 'example@example.com', password: 'oldPassword' };
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(user);
+      jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
+
+      // Act
+      const result = await service.changePassword(input, userId);
+
+      // Assert
+      expect(result).toEqual({ isSuccess: true });
+      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
+      expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ _id: userId }, { $set: { password: input.NewPassword } });
+    });
+
+    it('should throw NotFoundException for invalid user id or credentials', async () => {
+      // Arrange
+      const userId = 'invalidUserId';
+      const input = { Password: 'oldPassword', NewPassword: 'newPassword' };
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
+
+      // Act & Assert
+      await expect(service.changePassword(input, userId)).rejects.toThrow(NotFoundException);
+      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
   });
 
   describe('updateUser', () => {
     it('should update user information with valid id', async () => {
-      // Test implementation
+      // Arrange
+      const userId = 'validUserId';
+      const input = { Fullname: 'New Name' };
+      const user = { _id: userId, email: 'example@example.com', fullname: 'Old Name' };
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(user);
+      jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
+
+      // Act
+      const result = await service.updateUser(input, userId);
+
+      // Assert
+      expect(result).toEqual({ isSuccess: true });
+      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
+      expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ _id: userId }, { $set: { fullname: input.Fullname } });
+    });
+
+    it('should throw NotFoundException for invalid user id', async () => {
+      // Arrange
+      const userId = 'invalidUserId';
+      const input = { Fullname: 'New Name' };
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
+
+      // Act & Assert
+      await expect(service.updateUser(input, userId)).rejects.toThrow(NotFoundException);
+      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
   });
 
   describe('getByEmail', () => {
     it('should get user by email', async () => {
-      // Test implementation
+      // Arrange
+      const email = 'example@example.com';
+      const user = { _id: 'validUserId', email, fullname: 'Example User' };
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(user);
+
+      // Act
+      const result = await service.getByEmail(email);
+
+      // Assert
+      expect(result).toEqual(user);
+      expect(userModelMock.findOne).toHaveBeenCalledWith({ email });
+    });
+
+    it('should throw NotFoundException for invalid email', async () => {
+      // Arrange
+      const email = 'invalid@example.com';
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(null);
+
+      // Act & Assert
+      await expect(service.getByEmail(email)).rejects.toThrow(NotFoundException);
+      expect(userModelMock.findOne).toHaveBeenCalledWith({ email });
     });
   });
 
   describe('getUserById', () => {
     it('should get user by id', async () => {
-      // Test implementation
+      // Arrange
+      const userId = 'validUserId';
+      const user = { _id: userId, email: 'example@example.com', fullname: 'Example User' };
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(user);
+
+      // Act
+      const result = await service.getUserById(userId);
+
+      // Assert
+      expect(result).toEqual(user);
+      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
+    });
+
+    it('should throw NotFoundException for invalid user id', async () => {
+      // Arrange
+      const userId = 'invalidUserId';
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
+
+      // Act & Assert
+      await expect(service.getUserById(userId)).rejects.toThrow(NotFoundException);
+      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
   });
 
   describe('updateVerifyEmailStatus', () => {
     it('should update verifyEmail status for given email', async () => {
-      // Test implementation
+      // Arrange
+      const email = 'example@example.com';
+      jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
+
+      // Act
+      await service.updateVerifyEmailStatus(email);
+
+      expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ email }, { $set: { verifyEmail: true } });
+    });
+
+    it('should throw NotFoundException for invalid email', async () => {
+      // Arrange
+      const email = 'invalid@example.com';
+      jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
+
+      // Act & Assert
+      await expect(service.updateVerifyEmailStatus(email)).rejects.toThrow(NotFoundException);
+      expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ email }, { $set: { verifyEmail: true } });
     });
   });
 
   describe('validateOTP', () => {
     it('should validate OTP for given email', async () => {
-      // Test implementation
+      // Arrange
+      const email = 'example@example.com';
+      const otp = '123456';
+      jest.spyOn(redisServiceMock, 'getValueFromTempStore').mockResolvedValueOnce(otp);
+
+      // Act
+      const result = await service.validateOTP(email, otp);
+
+      // Assert
+      expect(result).toBeUndefined();
+      expect(redisServiceMock.getValueFromTempStore).toHaveBeenCalledWith(email);
+    });
+
+    it('should throw BadRequestException for invalid OTP', async () => {
+      // Arrange
+      const email = 'example@example.com';
+      const otp = 'invalidOTP';
+      jest.spyOn(redisServiceMock, 'getValueFromTempStore').mockResolvedValueOnce('validOTP');
+
+      // Act & Assert
+      await expect(service.validateOTP(email, otp)).rejects.toThrow(BadRequestException);
+      expect(redisServiceMock.getValueFromTempStore).toHaveBeenCalledWith(email);
     });
   });
 });
