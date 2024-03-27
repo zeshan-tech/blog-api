@@ -1,23 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MailerService } from './mailer.service';
 import { MailerModule as NMailerModule } from '@nestjs-modules/mailer';
-import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 
 @Module({
   imports: [
     NMailerModule.forRoot({
       // TODO: will manage env variable
-      transport: 'smtps://zeshanshakil0@gmail.com:afyc gohd sxvw xyrd@smtp.gmail.com',
-      defaults: {
-        from: '"nest-modules" <modules@nestjs.com>',
-      },
-      template: {
-        dir: __dirname + '/templates',
-        adapter: new PugAdapter(),
-        options: {
-          strict: true,
-        },
-      },
+      // TODO: Here library shows error log instead of success so please don't take it seriously it will be fixed in future
+      transport: 'smtps://zeshanshakil0@gmail.com:wyvt gjmq aimg pzzn@smtp.gmail.com',
     }),
   ],
 

@@ -5,3 +5,7 @@ export class SuccessOutput {
 export class MessageOutput {
   message: string;
 }
+
+export class IdOutput {
+  _id: string;
+}

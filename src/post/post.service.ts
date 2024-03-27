@@ -1,26 +1,71 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Post } from './schema/post.schema';
+import { Model } from 'mongoose';
+import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
 
 @Injectable()
 export class PostService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
+
+  async createPost(input: CreatePostInputDto, userId: string): Promise<IdOutput> {
+    try {
+      const post: Partial<Post> = {
+        title: input.Title,
+        content: input.Content,
+        user: userId,
+      };
+
+      const createdPost = await this.postModel.create(post);
+
+      return { _id: createdPost._id.toString() };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async getAllPosts(): Promise<Post[]> {
+    try {
+      return this.postModel.find();
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async getPostById(_id: string): Promise<Post> {
+    try {
+      return this.postModel.findOne({ _id });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async deletePost(postId: string, userId: string): Promise<SuccessOutput> {
+    try {
+      const deletedPost = await this.postModel.findOneAndDelete({ _id: postId, user: userId });
+
+      if (!deletedPost) {
+        throw new Error('Invalid post specified');
+      }
+
+      return { isSuccess: true };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async updatePost(input: UpdatePostInputDto, postId: string, userId: string): Promise<SuccessOutput> {
+    try {
+      const deletedPost = await this.postModel.findOneAndUpdate({ _id: postId, user: userId }, input);
+
+      if (!deletedPost) {
+        throw new Error('Invalid post specified');
+      }
+
+      return { isSuccess: true };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

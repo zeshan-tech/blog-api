@@ -7,17 +7,21 @@ import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
 import { MailerModule } from './mailer/mailer.module';
 import { RedisModule } from './redis/redis.module';
+import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://zeshanshakil0:S2bFsu5g0IMlsP1o@blog.o5qwk4d.mongodb.net/',
-    ),
+    MongooseModule.forRoot('mongodb://127.0.0.1:27017/posts'),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     PostModule,
     CommentModule,
     MailerModule,
     RedisModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

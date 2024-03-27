@@ -3,23 +3,59 @@ import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from 'class-validator
 export class UserRegisterInputDto {
   @IsNotEmpty()
   @IsString()
-  fullname: string;
+  Fullname: string;
 
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  Email: string;
 
   @IsNotEmpty()
   @IsStrongPassword()
-  password: string;
+  Password: string;
 }
 
 export class VerifyEmailInputDto {
   @IsNotEmpty()
   @IsEmail()
-  email: string;
+  Email: string;
 
   @IsNotEmpty()
   @IsString()
-  otp: string;
+  OTP: string;
+}
+
+export class LoginInputDto {
+  @IsNotEmpty()
+  @IsEmail()
+  Email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  Password: string;
+}
+
+export class ChangePasswordInputDto {
+  @IsNotEmpty()
+  @IsString()
+  Password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  NewPassword: string;
+}
+
+export class ChangeEmailInputDto {
+  @IsNotEmpty()
+  @IsString()
+  NewEmail: string;
+
+  @IsNotEmpty()
+  @IsString()
+  Password: string;
+}
+
+export class UpdateUserInputDto {
+  @IsNotEmpty()
+  @IsString()
+  Fullname: string;
 }

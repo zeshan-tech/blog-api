@@ -1,34 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { JwtAuthGuard } from '../auth/guards/JwtAuth.guard';
+import { CreateCommentInputDto, UpdateCommentInputDto } from './dto/CommentInput.dto';
+import { CurrentUser } from '../decorator/current-user.decorator';
 
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    return this.commentService.create(createCommentDto);
+  async createComment(@Body() input: CreateCommentInputDto, @CurrentUser() currentUser: CurrentUserType) {
+    return this.commentService.createComment(input, currentUser._id);
   }
 
-  @Get()
-  findAll() {
-    return this.commentService.findAll();
+  @Get(':PostId')
+  async getCommentsByPostId(@Param('PostId') PostId: string) {
+    return this.commentService.getCommentsByPostId(PostId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete(':_id')
+  async deleteComment(@Param('_id') _id: string, @CurrentUser() currentUser: CurrentUserType) {
+    return this.commentService.deleteComment(_id, currentUser._id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Put(':_id')
+  async updateComment(@Param('_id') _id: string, @Body() input: UpdateCommentInputDto, @CurrentUser() currentUser: CurrentUserType) {
+    return this.commentService.updateComment(input, _id, currentUser._id);
   }
 }

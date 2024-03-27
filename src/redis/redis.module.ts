@@ -7,15 +7,9 @@ import { RedisModule as NRedisModule, RedisModuleOptions } from '@liaoliaots/nes
   imports: [
     NRedisModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (): Promise<RedisModuleOptions> => {
+      useFactory: async (configService: ConfigService): Promise<RedisModuleOptions> => {
         return {
-          config: {
-            // host: configService.get<string>('REDIS_HOST'),
-            // port: configService.get<number>('REDIS_PORT'),
-            // password: configService.get<string>('REDIS_PASSWORD'),
-            // username: configService.get<string>('REDIS_USERNAME'),
-            url: 'redis://127.0.0.1:6379',
-          },
+          config: { url: configService.get<string>('REDIS_URI') },
         };
       },
       inject: [ConfigService],
