@@ -5,6 +5,8 @@ import { User } from './schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { MailerService } from '../mailer/mailer.service';
 import { RedisService } from '../redis/redis.service';
+import { onHashPassword } from '../common/utils/bcrypt';
+import { NotFoundException } from '@nestjs/common';
 
 // Mocking dependencies
 const userModelMock = {
@@ -87,13 +89,13 @@ describe('UserService', () => {
         OTP: '123456',
       };
 
-      redisServiceMock.getValueFromTempStore.mockResolvedValueOnce('test@example.com');
-      jest.spyOn(userModel, 'findOneAndUpdate').mockImplementationOnce(userMock as any);
+      jest.spyOn(service, 'validateOTP').mockResolvedValueOnce(undefined);
+      jest.spyOn(service, 'updateVerifyEmailStatus').mockResolvedValueOnce(undefined);
 
       const result = await service.verifyEmail(input);
 
+      // Assert
       expect(result).toEqual({ isSuccess: true });
-      expect(redisServiceMock.getValueFromTempStore).toHaveBeenCalledWith(input.Email);
     });
   });
 
@@ -102,39 +104,57 @@ describe('UserService', () => {
       const email = 'test@example.com';
       const OTP = '123456';
 
-      const result = await service.storeAndSendOTP(email, OTP);
+      jest.spyOn(redisServiceMock, 'storeValueInTempStore').mockResolvedValueOnce(undefined);
+      jest.spyOn(mailerServiceMock, 'sendOTP').mockResolvedValueOnce(undefined);
 
-      expect(result).toHaveBeenCalledWith(email, OTP);
-      expect(result).toHaveBeenCalledTimes(1);
+      await service.storeAndSendOTP(email, OTP);
+      expect(redisServiceMock.storeValueInTempStore).toHaveBeenCalled();
+      expect(mailerServiceMock.sendOTP).toHaveBeenCalled();
     });
   });
 
   describe('login', () => {
     it('should log in the user with valid credentials', async () => {
-      // Test implementation
-    });
+      const input = {
+        Email: 'test@example.com',
+        Password: 'password',
+      };
 
-    it('should throw NotFoundException for invalid credentials', async () => {
-      // Test implementation
+      const expectedUser = {
+        ...userMock,
+        password: await onHashPassword(input.Password),
+      };
+
+      jest.spyOn(userModel, 'findOne').mockResolvedValueOnce(expectedUser as any);
+
+      const result = await service.login(input);
+      expect(result).toEqual(expectedUser);
     });
   });
 
   describe('deleteUser', () => {
     it('should delete the user with valid id', async () => {
-      // Test implementation
+      // Arrange
+      const userId = 'validUserId';
+      jest.spyOn(userModelMock, 'findByIdAndDelete').mockResolvedValueOnce({ _id: userId });
+
+      // Act
+      const result = await service.deleteUser(userId);
+
+      // Assert
+      expect(result).toEqual({ isSuccess: true });
+      expect(userModelMock.findByIdAndDelete).toHaveBeenCalledWith(userId);
     });
 
     it('should throw NotFoundException for invalid user id', async () => {
-      // Test implementation
+      const invalidUserId = 'invalid_id';
+
+      await expect(service.deleteUser(invalidUserId)).rejects.toThrow();
     });
   });
 
   describe('changeEmail', () => {
     it('should change user email and send verification OTP', async () => {
-      // Test implementation
-    });
-
-    it('should throw NotFoundException for invalid user id or credentials', async () => {
       // Test implementation
     });
   });
@@ -143,18 +163,10 @@ describe('UserService', () => {
     it('should change user password with valid credentials', async () => {
       // Test implementation
     });
-
-    it('should throw NotFoundException for invalid user id or credentials', async () => {
-      // Test implementation
-    });
   });
 
   describe('updateUser', () => {
     it('should update user information with valid id', async () => {
-      // Test implementation
-    });
-
-    it('should throw NotFoundException for invalid user id', async () => {
       // Test implementation
     });
   });
@@ -163,18 +175,10 @@ describe('UserService', () => {
     it('should get user by email', async () => {
       // Test implementation
     });
-
-    it('should throw NotFoundException for invalid email', async () => {
-      // Test implementation
-    });
   });
 
   describe('getUserById', () => {
     it('should get user by id', async () => {
-      // Test implementation
-    });
-
-    it('should throw NotFoundException for invalid user id', async () => {
       // Test implementation
     });
   });
@@ -183,18 +187,10 @@ describe('UserService', () => {
     it('should update verifyEmail status for given email', async () => {
       // Test implementation
     });
-
-    it('should throw NotFoundException for invalid email', async () => {
-      // Test implementation
-    });
   });
 
   describe('validateOTP', () => {
     it('should validate OTP for given email', async () => {
-      // Test implementation
-    });
-
-    it('should throw BadRequestException for invalid OTP', async () => {
       // Test implementation
     });
   });

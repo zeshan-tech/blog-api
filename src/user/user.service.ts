@@ -172,8 +172,6 @@ export class UserService {
     try {
       const result = await this.redisService.getValueFromTempStore(email);
 
-      console.log(result);
-
       if (result !== otp) {
         throw new BadRequestException('Invalid OTP for ' + email);
       }
