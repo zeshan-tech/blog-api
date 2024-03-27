@@ -113,7 +113,7 @@ describe('PostService', () => {
 
   // DONE
   describe('deletePost', () => {
-    it('should throw an error if an invalid post ID is provided', async () => {
+    it('should throw an Error if an invalid post ID is provided', async () => {
       const invalidPostId = 'invalid_id';
       const userId = '100';
 

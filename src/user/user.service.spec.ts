@@ -79,6 +79,17 @@ describe('UserService', () => {
       expect(redisServiceMock.storeValueInTempStore).toHaveBeenCalled();
       expect(mailerServiceMock.sendOTP).toHaveBeenCalled();
     });
+
+    it('should throw error if email is already registered', async () => {
+      const input = {
+        Email: 'existing@example.com',
+        Fullname: 'Existing User',
+        Password: 'password',
+      };
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(userMock);
+
+      await expect(service.register(input)).rejects.toThrow('Email already registered');
+    });
   });
 
   describe('verifyEmail', () => {
@@ -93,8 +104,17 @@ describe('UserService', () => {
 
       const result = await service.verifyEmail(input);
 
-      // Assert
       expect(result).toEqual({ isSuccess: true });
+    });
+
+    it('should throw error if OTP is invalid or expired', async () => {
+      const input = {
+        Email: 'test@example.com',
+        OTP: 'invalidOTP',
+      };
+      jest.spyOn(service, 'validateOTP').mockRejectedValueOnce(new Error('Invalid OTP'));
+
+      await expect(service.verifyEmail(input)).rejects.toThrow('Invalid OTP');
     });
   });
 
@@ -109,6 +129,16 @@ describe('UserService', () => {
       await service.storeAndSendOTP(email, OTP);
       expect(redisServiceMock.storeValueInTempStore).toHaveBeenCalled();
       expect(mailerServiceMock.sendOTP).toHaveBeenCalled();
+    });
+
+    it('should throw error if failed to store OTP or send email', async () => {
+      const email = 'test@example.com';
+      const OTP = '123456';
+      jest.spyOn(redisServiceMock, 'storeValueInTempStore').mockRejectedValueOnce(new Error('Failed to store OTP'));
+      jest.spyOn(mailerServiceMock, 'sendOTP').mockRejectedValueOnce(new Error('Failed to send OTP via email'));
+
+      await expect(service.storeAndSendOTP(email, OTP)).rejects.toThrow('Failed to store OTP');
+      await expect(service.storeAndSendOTP(email, OTP)).rejects.toThrow('Failed to send OTP via email');
     });
   });
 
@@ -129,18 +159,25 @@ describe('UserService', () => {
       const result = await service.login(input);
       expect(result).toEqual(expectedUser);
     });
+
+    it('should throw error if login credentials are invalid', async () => {
+      const input = {
+        Email: 'test@example.com',
+        Password: 'incorrectPassword',
+      };
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(null);
+
+      await expect(service.login(input)).rejects.toThrow();
+    });
   });
 
   describe('deleteUser', () => {
     it('should delete the user with valid id', async () => {
-      // Arrange
       const userId = 'validUserId';
       jest.spyOn(userModelMock, 'findByIdAndDelete').mockResolvedValueOnce({ _id: userId });
 
-      // Act
       const result = await service.deleteUser(userId);
 
-      // Assert
       expect(result).toEqual({ isSuccess: true });
       expect(userModelMock.findByIdAndDelete).toHaveBeenCalledWith(userId);
     });
@@ -167,7 +204,6 @@ describe('UserService', () => {
 
       const result = await service.changeEmail(input, userId);
 
-      // Assert
       expect(result).toEqual(expect.objectContaining({ message: expect.any(String) }));
       expect(userModelMock.findOneAndUpdate).toHaveBeenCalled();
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
@@ -179,7 +215,6 @@ describe('UserService', () => {
       const input = { NewEmail: 'new@example.com', Password: 'password' };
       jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
 
-      // Act & Assert
       await expect(service.changeEmail(input, userId)).rejects.toThrow();
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
@@ -187,7 +222,6 @@ describe('UserService', () => {
 
   describe('changePassword', () => {
     it('should change user password with valid credentials', async () => {
-      // Arrange
       const userId = 'validUserId';
       const input = { Password: 'oldPassword', NewPassword: 'newPassword' };
 
@@ -197,22 +231,18 @@ describe('UserService', () => {
       });
       jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
 
-      // Act
       const result = await service.changePassword(input, userId);
 
-      // Assert
       expect(result).toEqual({ isSuccess: true });
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
       expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ _id: userId }, { $set: { password: input.NewPassword } });
     });
 
     it('should throw Error', async () => {
-      // Arrange
       const userId = 'invalidUserId';
       const input = { Password: 'oldPassword', NewPassword: 'newPassword' };
       jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
 
-      // Act & Assert
       await expect(service.changePassword(input, userId)).rejects.toThrow();
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
@@ -220,30 +250,25 @@ describe('UserService', () => {
 
   describe('updateUser', () => {
     it('should update user information with valid id', async () => {
-      // Arrange
       const userId = 'validUserId';
       const input = { Fullname: 'New Name' };
 
       jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(userMock);
       jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
 
-      // Act
       const result = await service.updateUser(input, userId);
 
-      // Assert
       expect(result).toEqual({ isSuccess: true });
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
       expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ _id: userId }, { $set: { fullname: input.Fullname } });
     });
 
     it('should throw Error', async () => {
-      // Arrange
       const userId = 'invalidUserId';
       const input = { Fullname: 'New Name' };
 
       jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
 
-      // Act & Assert
       await expect(service.updateUser(input, userId)).rejects.toThrow();
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
@@ -251,25 +276,20 @@ describe('UserService', () => {
 
   describe('getByEmail', () => {
     it('should get user by email', async () => {
-      // Arrange
       const email = 'example@example.com';
 
       jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(userMock);
 
-      // Act
       const result = await service.getByEmail(email);
 
-      // Assert
       expect(result).toEqual(userMock);
       expect(userModelMock.findOne).toHaveBeenCalledWith({ email });
     });
 
     it('should throw Error', async () => {
-      // Arrange
       const email = 'invalid@example.com';
       jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(null);
 
-      // Act & Assert
       await expect(service.getByEmail(email)).rejects.toThrow();
       expect(userModelMock.findOne).toHaveBeenCalledWith({ email });
     });
@@ -277,25 +297,20 @@ describe('UserService', () => {
 
   describe('getUserById', () => {
     it('should get user by id', async () => {
-      // Arrange
       const userId = 'validUserId';
 
       jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(userMock);
 
-      // Act
       const result = await service.getUserById(userId);
 
-      // Assert
       expect(result).toEqual(userMock);
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
 
     it('should throw Error', async () => {
-      // Arrange
       const userId = 'invalidUserId';
       jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
 
-      // Act & Assert
       await expect(service.getUserById(userId)).rejects.toThrow();
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
     });
@@ -303,11 +318,9 @@ describe('UserService', () => {
 
   describe('updateVerifyEmailStatus', () => {
     it('should update verifyEmail status for given email', async () => {
-      // Arrange
       const email = 'test@example.com';
       jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(userMock);
 
-      // Act
       await service.updateVerifyEmailStatus(email);
 
       expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ email }, { $set: { verifyEmail: true } });
@@ -317,33 +330,27 @@ describe('UserService', () => {
       const email = 'invalid@example.com';
       jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
 
-      // Act & Assert
       await expect(service.updateVerifyEmailStatus(email)).rejects.toThrow();
     });
   });
 
   describe('validateOTP', () => {
     it('should validate OTP for given email', async () => {
-      // Arrange
       const email = 'test@example.com';
       const otp = '123456';
       jest.spyOn(redisServiceMock, 'getValueFromTempStore').mockResolvedValueOnce(otp);
 
-      // Act
       const result = await service.validateOTP(email, otp);
 
-      // Assert
       expect(result).toBeUndefined();
       expect(redisServiceMock.getValueFromTempStore).toHaveBeenCalledWith(email);
     });
 
     it('should throw Error', async () => {
-      // Arrange
       const email = 'test@example.com';
       const otp = 'invalidOTP';
       jest.spyOn(redisServiceMock, 'getValueFromTempStore').mockResolvedValueOnce('validOTP');
 
-      // Act & Assert
       await expect(service.validateOTP(email, otp)).rejects.toThrow();
       expect(redisServiceMock.getValueFromTempStore).toHaveBeenCalledWith(email);
     });
