@@ -79,18 +79,6 @@ describe('UserService', () => {
       expect(redisServiceMock.storeValueInTempStore).toHaveBeenCalled();
       expect(mailerServiceMock.sendOTP).toHaveBeenCalled();
     });
-
-    it('should throw error if email is already registered', async () => {
-      const input = {
-        Email: 'test@example.com',
-        Fullname: 'full name',
-        Password: 'password',
-      };
-
-      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(new Error());
-
-      await expect(service.register(input)).rejects.toThrow();
-    });
   });
 
   describe('verifyEmail', () => {

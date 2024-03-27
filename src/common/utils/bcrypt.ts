@@ -1,9 +1,7 @@
 import * as bcrypt from 'bcrypt';
 
-const saltRounds = +process.env.SALT_ROUND;
-
 export const onHashPassword = async (password: string): Promise<string> => {
-  const salt = bcrypt.genSaltSync(saltRounds, 'b');
+  const salt = bcrypt.genSaltSync(8, 'b');
   const hashed = bcrypt.hashSync(password, salt);
   return hashed;
 };
