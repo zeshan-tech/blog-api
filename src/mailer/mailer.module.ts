@@ -5,7 +5,7 @@ import { MailerModule as NMailerModule } from '@nestjs-modules/mailer';
 @Module({
   imports: [
     NMailerModule.forRoot({
-      // TODO: will manage env variable
+      // TODO: will manage by .env variables
       // TODO: Here library shows error log instead of success so please don't take it seriously it will be fixed in future
       transport: 'smtps://quillpad@gmail.com:ncdj edzk aqrl lwbp@smtp.gmail.com',
     }),
