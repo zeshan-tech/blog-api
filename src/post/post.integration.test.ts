@@ -13,9 +13,8 @@ describe('PostController (Integration)', () => {
   let token: string;
   beforeAll(async () => {
     await server.setup([UserModule, PostModule]);
-    await server.authManager.insertUser();
-    token = await server.authManager.generateToken();
-    console.log(token);
+    const email = await server.authManager.insertUser();
+    token = await server.authManager.generateToken(email);
     const userModel = server.app.get<Model<User>>(getModelToken(User.name));
     const postModel = server.app.get<Model<Post>>(getModelToken(Post.name));
     await server.insertTestData(userModel, user);

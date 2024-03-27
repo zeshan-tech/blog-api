@@ -1,10 +1,9 @@
-import { Types } from 'mongoose';
+import { v4 as uuid } from 'uuid';
 
 const users = [
   {
-    _id: new Types.ObjectId('111111111111111111111111'),
     fullname: 'fullname',
-    email: 'test1@example.com',
+    email: `user${uuid()}@example.com`,
     password: 'password',
     emailVerified: false,
   },

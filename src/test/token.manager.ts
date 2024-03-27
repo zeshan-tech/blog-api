@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../user/schema/user.schema';
 import * as jwt from 'jsonwebtoken';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class AuthManager {
@@ -12,24 +13,29 @@ export class AuthManager {
 
   async insertUser() {
     try {
+      // Generate a random email address
+      const randomEmail = `user${uuid()}@example.com`;
+
       const newUser = new this.userModel({
-        fullname: process.env.TEST_USER_FULLNAME,
-        email: process.env.TEST_USER_EMAIL,
-        password: process.env.TEST_USER_PASSWORD,
+        fullname: 'test name',
+        email: randomEmail,
+        password: 'password',
         emailVerified: true,
       });
 
       await newUser.save();
 
       this.logger.log('User inserted successfully');
+
+      return randomEmail;
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async generateToken() {
+  async generateToken(email: string) {
     try {
-      const user = await this.userModel.findOne({ email: process.env.TEST_USER_EMAIL });
+      const user = await this.userModel.findOne({ email });
 
       if (!user) {
         throw new NotFoundException('User not found');
@@ -40,7 +46,7 @@ export class AuthManager {
         _id: user._id,
       };
 
-      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }); // You can customize expiresIn as needed
+      const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
       return token;
     } catch (error) {

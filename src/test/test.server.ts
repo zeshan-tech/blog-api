@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { AuthManager } from './token.manager';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -12,9 +12,10 @@ export class TestServer {
   public app: INestApplication;
   public authManager: AuthManager;
   public httpServer: any;
+  private testingModule: TestingModule;
 
   async init(modules: any[]): Promise<void> {
-    const moduleFixture = await Test.createTestingModule({
+    this.testingModule = await Test.createTestingModule({
       imports: [
         JwtModule.register({
           global: true,
@@ -32,9 +33,9 @@ export class TestServer {
       providers: [AuthManager],
     }).compile();
 
-    this.app = moduleFixture.createNestApplication();
+    this.app = this.testingModule.createNestApplication();
     this.httpServer = await this.app.getHttpServer();
-    this.authManager = moduleFixture.get<AuthManager>(AuthManager);
+    this.authManager = this.testingModule.get<AuthManager>(AuthManager);
     this.app.enableCors();
     await this.app.init();
   }
