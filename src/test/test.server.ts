@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthManager } from './token.manager';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { User, UserSchema } from '../user/schema/user.schema';
@@ -22,7 +22,14 @@ export class TestServer {
           secret: 'jwtConstants.secret',
           signOptions: { expiresIn: '1d' },
         }),
-        MongooseModule.forRoot('mongodb://127.0.0.1:27017/test'),
+        MongooseModule.forRootAsync({
+          imports: [ConfigModule],
+          useFactory: (configService: ConfigService) => ({
+            uri: configService.get('DB_URI'),
+            dbName: configService.get('TEST_DB'),
+          }),
+          inject: [ConfigService],
+        }),
         ConfigModule.forRoot({
           isGlobal: true,
         }),
