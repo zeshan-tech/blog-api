@@ -39,6 +39,22 @@ export class CommentService {
     return { isSuccess: true };
   }
 
+  async deleteByPostId(postId: string): Promise<SuccessOutput> {
+    try {
+      // Assuming this.postModel is your Post model
+      const deletedComments = await this.commentModel.deleteMany({ postId });
+
+      if (deletedComments.deletedCount === 0) {
+        throw new NotFoundException('No comments found for the specified post');
+      }
+
+      return { isSuccess: true };
+    } catch (error) {
+      // Handle any errors appropriately
+      throw new Error('An error occurred while deleting comments for the post');
+    }
+  }
+
   async updateComment(input: UpdateCommentInputDto, commentId: string, userId: string): Promise<SuccessOutput> {
     await this.commentModel.findOneAndUpdate({ _id: commentId, user: userId }, { text: input.Text });
 

@@ -20,3 +20,16 @@ export class Comment extends BaseSchema {
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
+
+CommentSchema.pre('findOneAndDelete', async function (next) {
+  try {
+    const currentCommentId = await this.getQuery()._id;
+
+    const commentModel = this.model.db.model('Comment');
+    await commentModel.deleteMany({ parentComment: currentCommentId });
+
+    next();
+  } catch (error) {
+    throw new Error(error);
+  }
+});

@@ -20,3 +20,16 @@ export class User extends BaseSchema {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre('findOneAndDelete', async function (next) {
+  try {
+    const currentCommentId = await this.getQuery()._id;
+
+    await this.model.db.model('Comment').deleteMany({ user: currentCommentId });
+    await this.model.db.model('Post').deleteMany({ user: currentCommentId });
+
+    next();
+  } catch (error) {
+    throw new Error(error);
+  }
+});

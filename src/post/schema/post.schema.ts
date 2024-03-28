@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 import { BaseSchema } from '../../base/base.schema';
 
 export type PostDocument = HydratedDocument<Post>;
@@ -20,3 +20,16 @@ export class Post extends BaseSchema {
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
+
+PostSchema.pre('findOneAndDelete', async function (next) {
+  try {
+    const currentPostId = await this.getQuery()._id;
+
+    const commentModel = this.model.db.model('Comment');
+    await commentModel.deleteMany({ post: currentPostId });
+
+    next();
+  } catch (error) {
+    throw new Error(error);
+  }
+});

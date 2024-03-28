@@ -13,7 +13,7 @@ const userModelMock = {
   findById: jest.fn(),
   findOne: jest.fn(),
   findOneAndUpdate: jest.fn(),
-  findByIdAndDelete: jest.fn(),
+  findOneAndDelete: jest.fn(),
 };
 const redisServiceMock = {
   storeValueInTempStore: jest.fn(),
@@ -163,19 +163,19 @@ describe('UserService', () => {
   describe('deleteUser', () => {
     it('should delete the user with valid id', async () => {
       const userId = 'validUserId';
-      jest.spyOn(userModelMock, 'findByIdAndDelete').mockResolvedValueOnce({ _id: userId });
+      jest.spyOn(userModelMock, 'findOneAndDelete').mockResolvedValueOnce({ _id: userId });
 
       const result = await service.deleteUser(userId);
 
       expect(result).toEqual({ isSuccess: true });
-      expect(userModelMock.findByIdAndDelete).toHaveBeenCalledWith(userId);
+      expect(userModelMock.findOneAndDelete).toHaveBeenCalledWith(userId);
     });
 
     it('should throw Error', async () => {
       const invalidUserId = 'invalid_id';
 
       await expect(service.deleteUser(invalidUserId)).rejects.toThrow();
-      expect(userModelMock.findByIdAndDelete).toHaveBeenCalledWith(invalidUserId);
+      expect(userModelMock.findOneAndDelete).toHaveBeenCalledWith(invalidUserId);
     });
   });
 
