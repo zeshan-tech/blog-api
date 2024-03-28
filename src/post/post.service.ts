@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
 import { Post } from './schema/post.schema';
 import { GridFsService } from './grid-fs.service';
+import { GetPostOutputDto } from './dto/PostOutput.dto';
 
 @Injectable()
 export class PostService {
@@ -12,7 +13,7 @@ export class PostService {
 
   async createPost(input: CreatePostInputDto, userId: string): Promise<IdOutput> {
     try {
-      const contentFileId = await this.gridFsService.saveContentToGridFS(input.Content);
+      const contentFileId = await this.gridFsService.saveOrUpdateContent(input.Content);
 
       const post: Partial<Post> = {
         title: input.Title,
@@ -28,17 +29,32 @@ export class PostService {
     }
   }
 
-  async getAllPosts(): Promise<Post[]> {
+  async getAllPosts(): Promise<GetPostOutputDto[]> {
     try {
-      return this.postModel.find();
+      const posts = await this.postModel.find();
+      const contents = await this.gridFsService.getAllContent();
+
+      const postsWithContent: GetPostOutputDto[] = await Promise.all(
+        posts.map(async (post) => {
+          const content = contents.find((c) => c.id === post.contentFileId);
+          post['content'] = content.content;
+          return post as unknown as GetPostOutputDto;
+        }),
+      );
+
+      return postsWithContent;
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async getPostById(_id: string): Promise<Post> {
+  async getPostById(_id: string): Promise<GetPostOutputDto> {
     try {
-      return this.postModel.findOne({ _id });
+      const post = await this.postModel.findOne({ _id });
+      const content = await this.gridFsService.getContentById(post.contentFileId);
+      post['content'] = content;
+
+      return post as unknown as GetPostOutputDto;
     } catch (error) {
       throw new Error(error);
     }
@@ -47,6 +63,7 @@ export class PostService {
   async deletePost(postId: string, userId: string): Promise<SuccessOutput> {
     try {
       const deletedPost = await this.postModel.findOneAndDelete({ _id: postId, user: userId });
+      await this.gridFsService.deleteContentById(deletedPost.contentFileId);
 
       if (!deletedPost) {
         throw new NotFoundException('Invalid post specified');
@@ -60,12 +77,17 @@ export class PostService {
 
   async updatePost(input: UpdatePostInputDto, postId: string, userId: string): Promise<SuccessOutput> {
     try {
-      const deletedPost = await this.postModel.findOneAndUpdate({ _id: postId, user: userId }, input);
-      await this.gridFsService.deleteContentById(deletedPost.contentFileId);
+      let contentFileId: string;
+      const post = await this.getPostById(postId);
 
-      if (!deletedPost) {
+      if (!post) {
         throw new NotFoundException('Invalid post specified');
       }
+      if (input.Content) {
+        contentFileId = await this.gridFsService.saveOrUpdateContent(input.Content, post.contentFileId);
+      }
+
+      await this.postModel.findOneAndUpdate({ _id: postId, user: userId, ...(input.Content ? { contentFileId } : null) }, input);
 
       return { isSuccess: true };
     } catch (error) {

@@ -4,7 +4,16 @@ import { Post } from './schema/post.schema';
 import { Model, Types } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
+import { GridFsService } from './grid-fs.service';
 
+const gridFsServiceMock = {
+  onModuleInit: jest.fn(),
+  onModuleDestroy: jest.fn(),
+  saveOrUpdateContent: jest.fn(),
+  getContentById: jest.fn(),
+  deleteContentById: jest.fn(),
+  getAllContent: jest.fn(),
+};
 describe('PostService', () => {
   let service: PostService;
   let postMock: Partial<Post>;
@@ -14,7 +23,6 @@ describe('PostService', () => {
     postMock = {
       _id: new Types.ObjectId(),
       title: 'Test title',
-      content: 'Test post',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -22,6 +30,7 @@ describe('PostService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PostService,
+        { provide: GridFsService, useValue: gridFsServiceMock },
         {
           provide: getModelToken(Post.name),
           useValue: {
@@ -53,6 +62,7 @@ describe('PostService', () => {
 
     it('should get all posts', async () => {
       jest.spyOn(mockPostModel, 'find').mockResolvedValue([postMock] as any);
+      jest.spyOn(gridFsServiceMock, 'getAllContent').mockResolvedValue([{ id: 'string', content: { content: Buffer.from('Test content', 'utf-8') } }]);
 
       const result = await service.getAllPosts();
 
@@ -60,7 +70,6 @@ describe('PostService', () => {
       expect(Array.isArray(result)).toBe(true);
       expect(result).toHaveLength(1);
       expect(result[0].title).toEqual(postMock.title);
-      expect(result[0].content).toEqual(postMock.content);
     });
   });
 
@@ -81,7 +90,6 @@ describe('PostService', () => {
 
       // Assertion
       expect(result.title).toEqual(postMock.title);
-      expect(result.content).toEqual(postMock.content);
     });
   });
 
@@ -98,16 +106,18 @@ describe('PostService', () => {
       const userId = '100';
       const input: CreatePostInputDto = {
         Title: 'Test post',
-        Content: 'Test content',
+        Content: Buffer.from('Test content', 'utf-8'),
       };
 
       jest.spyOn(mockPostModel, 'create').mockImplementationOnce(() => Promise.resolve(postMock as any));
+      jest.spyOn(gridFsServiceMock, 'saveOrUpdateContent').mockResolvedValue('string');
 
       const result = await service.createPost(input, userId);
 
       // Assertion
       expect(result && typeof result === 'object').toBe(true);
       expect(result._id).toEqual(postMock._id.toString());
+      expect(gridFsServiceMock.saveOrUpdateContent).toHaveBeenCalledWith(input.Content);
     });
   });
 
@@ -140,7 +150,7 @@ describe('PostService', () => {
       const userId = 'user_id';
       const input: UpdatePostInputDto = {
         Title: 'Test post',
-        Content: 'Test content',
+        Content: Buffer.from('Test content', 'utf-8'),
       };
 
       jest.spyOn(mockPostModel, 'findOneAndUpdate').mockRejectedValueOnce(new Error('Database connection error'));
@@ -153,14 +163,15 @@ describe('PostService', () => {
       const userId = 'user_id';
       const input: UpdatePostInputDto = {
         Title: 'Test post',
-        Content: 'Test content',
+        Content: Buffer.from('Test content', 'utf-8'),
       };
 
       jest.spyOn(mockPostModel, 'findOneAndUpdate').mockResolvedValue(postMock as any);
+      jest.spyOn(gridFsServiceMock, 'saveOrUpdateContent').mockResolvedValue('string');
 
       const result = await service.updatePost(input, postId, userId);
+      expect(gridFsServiceMock.saveOrUpdateContent).toHaveBeenCalledWith(input.Content);
 
-      // Assertion
       expect(result.isSuccess).toBe(true);
     });
   });

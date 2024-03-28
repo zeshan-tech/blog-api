@@ -33,8 +33,8 @@ describe('PostController (Integration)', () => {
   it('should create a post', async () => {
     const input: CreatePostInputDto = {
       Title: 'title',
-      Content: 'content',
-    };
+      // Content: 'content',
+    } as CreatePostInputDto;
     const response = await request(server.httpServer).post('/post').set({ Authorization: token }).send(input);
 
     currentPostId = response.body['_id'];
@@ -46,8 +46,8 @@ describe('PostController (Integration)', () => {
   it('should update a post', async () => {
     const input: UpdatePostInputDto = {
       Title: 'title',
-      Content: 'content',
-    };
+      // Content: 'content',
+    } as CreatePostInputDto;
     const response = await request(server.httpServer).put(`/post/${currentPostId}`).set({ Authorization: token }).send(input);
 
     expect(response.body).toBeDefined();

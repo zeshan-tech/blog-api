@@ -7,7 +7,7 @@ export class CreatePostInputDto {
 
   @IsNotEmpty()
   @IsString()
-  Content: string;
+  Content: Buffer;
 }
 
 export class UpdatePostInputDto {
@@ -17,5 +17,5 @@ export class UpdatePostInputDto {
 
   @IsOptional()
   @IsString()
-  Content: string;
+  Content: Buffer;
 }
