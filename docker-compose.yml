@@ -1,29 +1,37 @@
 version: '3.8'
-
 services:
-  nestjs:
-    build: .
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: quillpad-nest-api
+    volumes:
+      - mongodb_data:/data/db
     ports:
-      - ${PORT}:${PORT}
+      - '27017:27017'
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quillpad-nest-api
     environment:
       - PORT=${PORT}
       - SALT_ROUND=${SALT_ROUND}
       - REDIS_URI=${REDIS_URI}
       - DB_URI=${DB_URI}
       - DB_NAME=${DB_NAME}
+      - TEST_DB=${TEST_DB}
       - JWT_SECRET=${JWT_SECRET}
       - SEND_GRID_API_KEY=${SEND_GRID_API_KEY}
       - SEND_GRID_FROM_EMAIL=${SEND_GRID_FROM_EMAIL}
+    ports:
+      - '8080:8080'
     depends_on:
       - mongodb
 
-  mongodb:
-    image: mongo
-    restart: always
+  prom-server:
+    image: prom/prometheus
     ports:
-      - '27017:27017'
+      - '9090:9090'
     volumes:
-      - mongodb_data:/data/db
-
-volumes:
-  mongodb_data:
+      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
