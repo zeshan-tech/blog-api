@@ -20,8 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@anchan828/nest-sendgrid": "^0.6.82",
     "@liaoliaots/nestjs-redis": "^9.0.5",
-    "@nestjs-modules/mailer": "^1.11.2",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^3.2.1",
     "@nestjs/core": "^9.0.0",
@@ -78,7 +78,6 @@
     ],
     "rootDir": "src",
     "testRegex": ".*\\.(test|spec)\\.ts$",
-
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
