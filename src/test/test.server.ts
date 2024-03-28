@@ -29,12 +29,12 @@ export class TestServer {
           useFactory: async (configService: ConfigService) => {
             const client = new MongoClient(configService.get('DB_URI'));
             await client.connect();
-            const db = client.db(configService.get('DB_NAME'));
+            const db = client.db(configService.get('TEST_DB'));
             this.gridFSBucket = new GridFSBucket(db);
 
             return {
               uri: configService.get('DB_URI'),
-              dbName: configService.get('DB_NAME'),
+              dbName: configService.get('TEST_DB'),
             };
           },
           inject: [ConfigService],

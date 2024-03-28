@@ -34,7 +34,7 @@ describe('PostController (Integration)', () => {
 
   const saveContent = async (): Promise<string> => {
     const fileName = 'content.txt';
-    const content = Buffer.from('content', 'utf-8');
+    const content = Buffer.from("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,", 'utf-8');
     fs.writeFileSync(fileName, content);
 
     const readStream = fs.createReadStream(fileName);

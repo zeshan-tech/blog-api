@@ -3,17 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
 import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
-import { GetPostOutputDto } from './dto/PostOutput.dto';
-import { GridFsService } from './grid-fs.service';
 import { Post } from './schema/post.schema';
+import { CloudinaryService } from './cloudinary.service';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>, private readonly gridFsService: GridFsService) {}
+  constructor(@InjectModel(Post.name) private postModel: Model<Post>, private readonly cloudinaryService: CloudinaryService) {}
 
   async createPost(input: CreatePostInputDto, userId: string): Promise<IdOutput> {
     try {
-      const contentFileId = await this.gridFsService.saveOrUpdateContent(input.Content);
+      const contentFileId = await this.cloudinaryService.saveOrUpdateContent(input.Content);
 
       const post: Partial<Post> = {
         title: input.Title,
@@ -29,32 +28,21 @@ export class PostService {
     }
   }
 
-  async getAllPosts(): Promise<GetPostOutputDto[]> {
+  async getAllPosts(): Promise<Post[]> {
     try {
       const posts = await this.postModel.find();
-      const contents = await this.gridFsService.getAllContent();
 
-      const postsWithContent: GetPostOutputDto[] = await Promise.all(
-        posts.map(async (post) => {
-          const content = contents.find((c) => c.id === post.contentFileId);
-          post['content'] = content.content;
-          return post as unknown as GetPostOutputDto;
-        }),
-      );
-
-      return postsWithContent;
+      return posts;
     } catch (error) {
       throw new Error(error);
     }
   }
 
-  async getPostById(_id: string): Promise<GetPostOutputDto> {
+  async getPostById(_id: string): Promise<Post> {
     try {
       const post = await this.postModel.findOne({ _id });
-      const content = await this.gridFsService.getContentById(post.contentFileId);
-      post['content'] = content;
 
-      return post as unknown as GetPostOutputDto;
+      return post;
     } catch (error) {
       throw new Error(error);
     }
@@ -63,7 +51,7 @@ export class PostService {
   async deletePost(postId: string, userId: string): Promise<SuccessOutput> {
     try {
       const deletedPost = await this.postModel.findOneAndDelete({ _id: postId, user: userId });
-      await this.gridFsService.deleteContentById(deletedPost.contentFileId);
+      await this.cloudinaryService.deleteContentById(deletedPost.contentFileId);
 
       if (!deletedPost) {
         throw new NotFoundException('Invalid post specified');
@@ -84,7 +72,7 @@ export class PostService {
         throw new NotFoundException('Invalid post specified');
       }
       if (input.Content) {
-        contentFileId = await this.gridFsService.saveOrUpdateContent(input.Content, post.contentFileId);
+        contentFileId = await this.cloudinaryService.saveOrUpdateContent(input.Content, post.contentFileId);
       }
 
       await this.postModel.findOneAndUpdate({ _id: postId, user: userId, ...(input.Content ? { contentFileId } : null) }, input);

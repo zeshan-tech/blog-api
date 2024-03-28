@@ -172,7 +172,7 @@ export class UserService {
 
   async updateVerifyEmailStatus(email: string): Promise<void> {
     try {
-      const user = await this.userModel.findOneAndUpdate({ email }, { $set: { verifyEmail: true } });
+      const user = await this.userModel.findOneAndUpdate({ email }, { $set: { emailVerified: true } });
 
       if (!user) {
         throw new NotFoundException('Invalid user specified!');
