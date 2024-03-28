@@ -68,6 +68,13 @@ describe('CommentController (Integration)', () => {
     expect(typeof response.body[0]['text']).toBe('string');
   }, 100000);
 
+  it('should get comments by post id', async () => {
+    const response = await request(server.httpServer).get(`/comment/replies/${currentCommentId}`).set({ Authorization: token }).send();
+
+    expect(response.body).toBeDefined();
+    expect(Array.isArray(response.body)).toBe(true);
+  }, 100000);
+
   it('should delete comment', async () => {
     const response = await request(server.httpServer).delete(`/comment/${currentCommentId}`).set({ Authorization: token }).send();
 

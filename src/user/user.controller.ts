@@ -1,6 +1,15 @@
 import { Controller, Post, Body, Delete, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserRegisterInputDto, VerifyEmailInputDto, ChangePasswordInputDto, ChangeEmailInputDto, UpdateUserInputDto, LoginInputDto } from './dto/UserInput.dto';
+import {
+  UserRegisterInputDto,
+  VerifyEmailInputDto,
+  ChangePasswordInputDto,
+  ChangeEmailInputDto,
+  UpdateUserInputDto,
+  LoginInputDto,
+  ForgotPasswordInputDto,
+  ResetPasswordInputDto,
+} from './dto/UserInput.dto';
 import { AuthService } from '../auth/auth.service';
 import { CurrentUser } from '../decorator/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/JwtAuth.guard';
@@ -48,5 +57,15 @@ export class UserController {
   @Put('update')
   updateUser(@Body() input: UpdateUserInputDto, @CurrentUser() currentUser: CurrentUserType) {
     return this.userService.updateUser(input, currentUser._id);
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Body() input: ForgotPasswordInputDto) {
+    return this.userService.forgotPassword(input);
+  }
+
+  @Put('reset-password')
+  resetPassword(@Body() input: ResetPasswordInputDto) {
+    return this.userService.resetPassword(input);
   }
 }

@@ -62,3 +62,23 @@ export class UpdateUserInputDto {
   @IsString()
   Fullname: string;
 }
+
+export class ForgotPasswordInputDto {
+  @IsNotEmpty()
+  @IsString()
+  Email: string;
+}
+
+export class ResetPasswordInputDto {
+  @IsNotEmpty()
+  @IsString()
+  Email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  OTP: string;
+
+  @IsNotEmpty()
+  @IsStrongPassword()
+  Password: string;
+}

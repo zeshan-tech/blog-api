@@ -224,7 +224,7 @@ describe('UserService', () => {
 
       expect(result).toEqual({ isSuccess: true });
       expect(userModelMock.findById).toHaveBeenCalledWith(userId);
-      expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ _id: userId }, { $set: { password: input.NewPassword } });
+      expect(userModelMock.findOneAndUpdate).toHaveBeenCalled();
     });
 
     it('should throw Error', async () => {

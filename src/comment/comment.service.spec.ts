@@ -65,6 +65,29 @@ describe('CommentService', () => {
     });
   });
 
+  describe('getReplies', () => {
+    it('should get comment replies', async () => {
+      const postId = '100';
+
+      jest.spyOn(mockCommentModel, 'find').mockResolvedValue([commentMock] as any);
+
+      const result = await service.getReplies(postId);
+
+      // Assertion
+      expect(Array.isArray(result)).toBe(true);
+      expect(result).toHaveLength(1);
+      expect(result[0].text).toEqual(commentMock.text);
+    });
+
+    it('should throw an error if error to get comment replies', async () => {
+      const postId = '100';
+      jest.spyOn(mockCommentModel, 'find').mockRejectedValueOnce(new Error());
+
+      // Act & Assert
+      await expect(service.getReplies(postId)).rejects.toThrow();
+    });
+  });
+
   describe('createComment', () => {
     it('should create a comment', async () => {
       const userId = '100';

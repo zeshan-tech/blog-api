@@ -8,6 +8,7 @@ import { Types } from 'mongoose';
 const commentServiceMock = {
   createComment: jest.fn(),
   getCommentsByPostId: jest.fn(),
+  getReplies: jest.fn(),
   deleteComment: jest.fn(),
   updateComment: jest.fn(),
 };
@@ -57,6 +58,15 @@ describe('CommentController', () => {
       jest.spyOn(commentServiceMock, 'getCommentsByPostId').mockResolvedValue([commentMock]);
 
       const result = await controller.getCommentsByPostId('100');
+      expect(result[0]).toEqual(commentMock);
+    });
+  });
+
+  describe('getReplies', () => {
+    it('should get comment replies', async () => {
+      jest.spyOn(commentServiceMock, 'getReplies').mockResolvedValue([commentMock]);
+
+      const result = await controller.getReplies('100');
       expect(result[0]).toEqual(commentMock);
     });
   });

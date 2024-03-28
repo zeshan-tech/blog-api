@@ -1,7 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { ChangeEmailInputDto, ChangePasswordInputDto, LoginInputDto, UpdateUserInputDto, UserRegisterInputDto, VerifyEmailInputDto } from './dto/UserInput.dto';
+import {
+  ChangeEmailInputDto,
+  ChangePasswordInputDto,
+  ForgotPasswordInputDto,
+  LoginInputDto,
+  ResetPasswordInputDto,
+  UpdateUserInputDto,
+  UserRegisterInputDto,
+  VerifyEmailInputDto,
+} from './dto/UserInput.dto';
 import { AuthService } from '../auth/auth.service';
 import { Types } from 'mongoose';
 import { User } from './schema/user.schema';
@@ -15,6 +24,8 @@ const userServiceMock = {
   changePassword: jest.fn(),
   changeEmail: jest.fn(),
   updateUser: jest.fn(),
+  forgotPassword: jest.fn(),
+  resetPassword: jest.fn(),
 };
 
 // Mock dependencies
@@ -131,6 +142,28 @@ describe('User Controller', () => {
       jest.spyOn(userServiceMock, 'updateUser').mockResolvedValueOnce({ isSuccess: true });
 
       const result = await controller.updateUser(input, currentUser);
+      expect(result.isSuccess).toBe(true);
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('should update user', async () => {
+      const input: ForgotPasswordInputDto = { Email: 'test@exmaple.com' };
+
+      jest.spyOn(userServiceMock, 'forgotPassword').mockResolvedValueOnce({ message: 'message' });
+
+      const result = await controller.forgotPassword(input);
+      expect(result.message).toBe('message');
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('should update user', async () => {
+      const input: ResetPasswordInputDto = { Email: 'test@example.com', OTP: '123456', Password: 'password' };
+
+      jest.spyOn(userServiceMock, 'resetPassword').mockResolvedValueOnce({ isSuccess: true });
+
+      const result = await controller.resetPassword(input);
       expect(result.isSuccess).toBe(true);
     });
   });

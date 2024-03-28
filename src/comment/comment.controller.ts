@@ -14,9 +14,14 @@ export class CommentController {
     return this.commentService.createComment(input, currentUser._id);
   }
 
-  @Get(':PostId')
-  async getCommentsByPostId(@Param('PostId') PostId: string) {
-    return this.commentService.getCommentsByPostId(PostId);
+  @Get(':postId')
+  async getCommentsByPostId(@Param('postId') postId: string) {
+    return this.commentService.getCommentsByPostId(postId);
+  }
+
+  @Get('replies/:_id')
+  async getReplies(@Param('_id') _id: string) {
+    return this.commentService.getReplies(_id);
   }
 
   @UseGuards(JwtAuthGuard)

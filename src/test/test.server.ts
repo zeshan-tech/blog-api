@@ -1,12 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthManager } from './token.manager';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { User, UserSchema } from '../user/schema/user.schema';
 import { Model } from 'mongoose';
-import { MongoClient, GridFSBucket } from 'mongodb';
 
 export class TestServer {
   public authToken: string;
@@ -14,7 +13,6 @@ export class TestServer {
   public authManager: AuthManager;
   public httpServer: any;
   private testingModule: TestingModule;
-  public gridFSBucket: GridFSBucket;
 
   async init(modules: any[]): Promise<void> {
     this.testingModule = await Test.createTestingModule({
@@ -24,21 +22,7 @@ export class TestServer {
           secret: 'jwtConstants.secret',
           signOptions: { expiresIn: '1d' },
         }),
-        MongooseModule.forRootAsync({
-          imports: [ConfigModule],
-          useFactory: async (configService: ConfigService) => {
-            const client = new MongoClient(configService.get('DB_URI'));
-            await client.connect();
-            const db = client.db(configService.get('TEST_DB'));
-            this.gridFSBucket = new GridFSBucket(db);
-
-            return {
-              uri: configService.get('DB_URI'),
-              dbName: configService.get('TEST_DB'),
-            };
-          },
-          inject: [ConfigService],
-        }),
+        MongooseModule.forRoot('mongodb://127.0.0.1:27017/test'),
         ConfigModule.forRoot({
           isGlobal: true,
         }),
@@ -64,11 +48,9 @@ export class TestServer {
     await this.init(modules);
   }
 
-  async insertTestData<T>(model: Model<T>, data: Record<string, any>): Promise<T[]> {
+  async insertTestData<T>(UserModel: Model<T>, data: Record<string, any>): Promise<T[]> {
     try {
-      console.log(model, data);
-
-      return (await model.insertMany(data)) as T[];
+      return (await UserModel.insertMany(data)) as T[];
     } catch (error) {
       throw new Error(error);
     }
