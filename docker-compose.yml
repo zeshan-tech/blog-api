@@ -4,15 +4,16 @@ services:
   nestjs:
     build: .
     ports:
-      - "${PORT}:8081"
+      - ${PORT}:${PORT}
     environment:
       - PORT=${PORT}
       - SALT_ROUND=${SALT_ROUND}
-      - SMTP_APP_PASSWORD=${SMTP_APP_PASSWORD}
-      - SMTP_APP_EMAIL=${SMTP_APP_EMAIL}
-      - SMTP_APP_HOST=${SMTP_APP_HOST}
-      - SMTP_APP_NAME=${SMTP_APP_NAME}
       - REDIS_URI=${REDIS_URI}
+      - DB_URI=${DB_URI}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
+      - SEND_GRID_API_KEY=${SEND_GRID_API_KEY}
+      - SEND_GRID_FROM_EMAIL=${SEND_GRID_FROM_EMAIL}
     depends_on:
       - mongodb
 
@@ -20,7 +21,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongodb_data:/data/db
 
