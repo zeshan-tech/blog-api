@@ -4,19 +4,16 @@ import { Model } from 'mongoose';
 import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
 import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
 import { Post } from './schema/post.schema';
-import { CloudinaryService } from './cloudinary.service';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>, private readonly cloudinaryService: CloudinaryService) {}
+  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
 
   async createPost(input: CreatePostInputDto, userId: string): Promise<IdOutput> {
     try {
-      const contentFileId = await this.cloudinaryService.saveOrUpdateContent(input.Content);
-
       const post: Partial<Post> = {
         title: input.Title,
-        contentFileId: contentFileId,
+        content: input.Content,
         user: userId,
       };
 
@@ -51,7 +48,6 @@ export class PostService {
   async deletePost(postId: string, userId: string): Promise<SuccessOutput> {
     try {
       const deletedPost = await this.postModel.findOneAndDelete({ _id: postId, user: userId });
-      await this.cloudinaryService.deleteContentById(deletedPost.contentFileId);
 
       if (!deletedPost) {
         throw new NotFoundException('Invalid post specified');
@@ -71,10 +67,6 @@ export class PostService {
       if (!post) {
         throw new NotFoundException('Invalid post specified');
       }
-      if (input.Content) {
-        contentFileId = await this.cloudinaryService.saveOrUpdateContent(input.Content, post.contentFileId);
-      }
-
       await this.postModel.findOneAndUpdate({ _id: postId, user: userId, ...(input.Content ? { contentFileId } : null) }, input);
 
       return { isSuccess: true };

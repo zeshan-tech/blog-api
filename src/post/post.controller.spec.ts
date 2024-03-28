@@ -21,7 +21,7 @@ describe('PostController', () => {
     postMock = {
       _id: new Types.ObjectId(),
       title: 'Test title',
-      contentFileId: 'contentFileId',
+      content: Buffer.from('contentFileId', 'utf-8'),
       createdAt: new Date(),
       updatedAt: new Date(),
     };

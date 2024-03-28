@@ -312,7 +312,7 @@ describe('UserService', () => {
 
       await service.updateVerifyEmailStatus(email);
 
-      expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ email }, { $set: { verifyEmail: true } });
+      expect(userModelMock.findOneAndUpdate).toHaveBeenCalledWith({ email }, { $set: { emailVerified: true } });
     });
 
     it('should throw Error', async () => {
