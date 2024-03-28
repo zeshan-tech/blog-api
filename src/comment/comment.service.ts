@@ -23,9 +23,8 @@ export class CommentService {
   }
 
   async getCommentsByPostId(postId: string): Promise<Comment[]> {
-    return this.commentModel.find({ post: new Types.ObjectId(postId) as unknown as string });
+    return this.commentModel.find({ post: new Types.ObjectId(postId) as any });
   }
-
   async getReplies(_id: string): Promise<Comment[]> {
     return this.commentModel.find({ parentComment: _id });
   }

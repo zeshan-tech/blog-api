@@ -44,7 +44,7 @@ describe('CommentService', () => {
 
   describe('getCommentsByPostId', () => {
     it('should get comments by post _id', async () => {
-      const postId = '100';
+      const postId = '111111111111111111111111';
 
       jest.spyOn(mockCommentModel, 'find').mockResolvedValue([commentMock] as any);
 
