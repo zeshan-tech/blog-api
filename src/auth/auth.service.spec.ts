@@ -11,7 +11,7 @@ const jwtServiceMock = {
 };
 
 const userServiceMock = {
-  getByEmail: jest.fn(),
+  isUserExistById: jest.fn(),
 };
 
 describe('AuthService', () => {
@@ -34,17 +34,17 @@ describe('AuthService', () => {
   });
 
   it('should throw error if user service throws error during authentication', async () => {
-    const email = 'existing@example.com';
+    const id = 'user_id';
     const errorMessage = 'User service error';
 
-    userServiceMock.getByEmail.mockRejectedValueOnce(errorMessage);
+    userServiceMock.isUserExistById.mockRejectedValueOnce(errorMessage);
 
-    await expect(service.authenticateUser(email)).rejects.toThrowError(errorMessage);
-    expect(userServiceMock.getByEmail).toHaveBeenCalledWith(email);
+    await expect(service.authenticateUser(id)).rejects.toThrowError(errorMessage);
+    expect(userServiceMock.isUserExistById).toHaveBeenCalledWith(id);
   });
 
   it('should throw error if JWT service fails to sign token', () => {
-    const user = { _id: new Types.ObjectId(), email: 'existing@example.com' } as User;
+    const user = { _id: new Types.ObjectId(), email: 'test@example.com' } as User;
 
     jwtServiceMock.sign.mockImplementation(() => {
       throw new Error('JWT signing failed');

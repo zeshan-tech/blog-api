@@ -23,6 +23,7 @@ describe('PostService', () => {
     postMock = {
       _id: new Types.ObjectId(),
       title: 'Test title',
+      contentFileId: 'contentFileId',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -37,6 +38,7 @@ describe('PostService', () => {
             find: jest.fn(),
             findOne: jest.fn(),
             create: jest.fn(),
+            findById: jest.fn(),
             findOneAndUpdate: jest.fn(),
             findOneAndDelete: jest.fn(),
           },
@@ -62,7 +64,7 @@ describe('PostService', () => {
 
     it('should get all posts', async () => {
       jest.spyOn(mockPostModel, 'find').mockResolvedValue([postMock] as any);
-      jest.spyOn(gridFsServiceMock, 'getAllContent').mockResolvedValue([{ id: 'string', content: { content: Buffer.from('Test content', 'utf-8') } }]);
+      jest.spyOn(gridFsServiceMock, 'getAllContent').mockResolvedValue([{ id: postMock.contentFileId, content: Buffer.from('Test content', 'utf-8') }]);
 
       const result = await service.getAllPosts();
 
@@ -159,19 +161,20 @@ describe('PostService', () => {
     });
 
     it('should update a post', async () => {
-      const postId = '100';
+      const postId = postMock._id.toString();
       const userId = 'user_id';
       const input: UpdatePostInputDto = {
         Title: 'Test post',
         Content: Buffer.from('Test content', 'utf-8'),
       };
 
-      jest.spyOn(mockPostModel, 'findOneAndUpdate').mockResolvedValue(postMock as any);
+      jest.spyOn(mockPostModel, 'findById').mockResolvedValue(postMock);
       jest.spyOn(gridFsServiceMock, 'saveOrUpdateContent').mockResolvedValue('string');
+      jest.spyOn(mockPostModel, 'findOneAndUpdate').mockResolvedValue(postMock);
 
       const result = await service.updatePost(input, postId, userId);
-      expect(gridFsServiceMock.saveOrUpdateContent).toHaveBeenCalledWith(input.Content);
 
+      expect(gridFsServiceMock.saveOrUpdateContent).toHaveBeenCalledWith(input.Content);
       expect(result.isSuccess).toBe(true);
     });
   });

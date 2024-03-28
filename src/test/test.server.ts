@@ -48,9 +48,9 @@ export class TestServer {
     await this.init(modules);
   }
 
-  async insertTestData<T>(UserModel: Model<T>, data: Record<string, any>): Promise<T[]> {
+  async insertTestData<T>(model: Model<T>, data: Record<string, any>): Promise<T[]> {
     try {
-      return (await UserModel.insertMany(data)) as T[];
+      return (await model.insertMany(data)) as T[];
     } catch (error) {
       throw new Error(error);
     }

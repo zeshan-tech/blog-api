@@ -21,7 +21,7 @@ describe('PostController', () => {
     postMock = {
       _id: new Types.ObjectId(),
       title: 'Test title',
-      content: 'Test post',
+      contentFileId: 'contentFileId',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -40,7 +40,7 @@ describe('PostController', () => {
 
   describe('createPost', () => {
     it('should create a post', async () => {
-      const input: CreatePostInputDto = { Content: 'Test content', Title: 'test title' };
+      const input: CreatePostInputDto = { Content: Buffer.from('Test content', 'utf-8'), Title: 'test title' };
       const currentUser: CurrentUserType = { email: 'test@example.com', _id: '100' };
 
       jest.spyOn(postServiceMock, 'createPost').mockResolvedValueOnce({ _id: '100' });
@@ -81,7 +81,7 @@ describe('PostController', () => {
 
   describe('updatePost', () => {
     it('should update post', async () => {
-      const input: UpdatePostInputDto = { Content: 'Test content', Title: 'test title' };
+      const input: UpdatePostInputDto = { Content: Buffer.from('Test content', 'utf-8'), Title: 'test title' };
       const currentUser: CurrentUserType = { email: 'test@example.com', _id: '100' };
 
       jest.spyOn(postServiceMock, 'updatePost').mockResolvedValueOnce({ isSuccess: true });

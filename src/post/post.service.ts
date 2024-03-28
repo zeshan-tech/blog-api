@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
-import { Post } from './schema/post.schema';
-import { GridFsService } from './grid-fs.service';
+import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
 import { GetPostOutputDto } from './dto/PostOutput.dto';
+import { GridFsService } from './grid-fs.service';
+import { Post } from './schema/post.schema';
 
 @Injectable()
 export class PostService {
@@ -78,7 +78,7 @@ export class PostService {
   async updatePost(input: UpdatePostInputDto, postId: string, userId: string): Promise<SuccessOutput> {
     try {
       let contentFileId: string;
-      const post = await this.getPostById(postId);
+      const post = await this.postModel.findById(postId);
 
       if (!post) {
         throw new NotFoundException('Invalid post specified');

@@ -1,14 +1,13 @@
-import { TestServer } from '../test/test.server';
-import { PostModule } from './post.module';
-import user from '../test/data/user';
-import post from '../test/data/post';
-import { UserModule } from '../user/user.module';
-import { Model } from 'mongoose';
-import { User } from '../user/schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
-import { Post } from './schema/post.schema';
-import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
+import { Model } from 'mongoose';
 import * as request from 'supertest';
+import post from '../test/data/post';
+import user from '../test/data/user';
+import { TestServer } from '../test/test.server';
+import { User } from '../user/schema/user.schema';
+import { UserModule } from '../user/user.module';
+import { PostModule } from './post.module';
+import { Post } from './schema/post.schema';
 
 describe('PostController (Integration)', () => {
   const server = new TestServer();
@@ -20,9 +19,10 @@ describe('PostController (Integration)', () => {
     const email = await server.authManager.insertUser();
     token = await server.authManager.generateToken(email);
     const userModel = server.app.get<Model<User>>(getModelToken(User.name));
-    const postModel = server.app.get<Model<Post>>(getModelToken(Post.name));
     await server.insertTestData(userModel, user);
-    await server.insertTestData(postModel, post);
+    const postModel = server.app.get<Model<Post>>(getModelToken(Post.name));
+    const createdPost = await server.insertTestData(postModel, post);
+    currentPostId = createdPost[0]._id.toString();
     token = `Bearer ${token}`;
   }, 100000);
 
@@ -31,23 +31,21 @@ describe('PostController (Integration)', () => {
   }, 100000);
 
   it('should create a post', async () => {
-    const input: CreatePostInputDto = {
+    const input = {
       Title: 'title',
-      // Content: 'content',
-    } as CreatePostInputDto;
+      Content: "'Test content', 'utf-8'",
+    };
     const response = await request(server.httpServer).post('/post').set({ Authorization: token }).send(input);
-
-    currentPostId = response.body['_id'];
 
     expect(response.body).toBeDefined();
     expect(typeof response.body['_id']).toBe('string');
   }, 100000);
 
   it('should update a post', async () => {
-    const input: UpdatePostInputDto = {
+    const input = {
       Title: 'title',
-      // Content: 'content',
-    } as CreatePostInputDto;
+      Content: "'Test content', 'utf-8'",
+    };
     const response = await request(server.httpServer).put(`/post/${currentPostId}`).set({ Authorization: token }).send(input);
 
     expect(response.body).toBeDefined();
