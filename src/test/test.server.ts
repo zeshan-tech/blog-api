@@ -17,10 +17,13 @@ export class TestServer {
   async init(modules: any[]): Promise<void> {
     this.testingModule = await Test.createTestingModule({
       imports: [
-        JwtModule.register({
-          global: true,
-          secret: 'jwtConstants.secret',
-          signOptions: { expiresIn: '1d' },
+        JwtModule.registerAsync({
+          useFactory: (configService: ConfigService) => ({
+            global: true,
+            secret: configService.get<string>('JWT_SECRET'),
+            signOptions: { expiresIn: '1d' },
+          }),
+          inject: [ConfigService],
         }),
         MongooseModule.forRootAsync({
           imports: [ConfigModule],

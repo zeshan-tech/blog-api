@@ -4,14 +4,18 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './guards/JwtAuth.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Module({
   imports: [
-    JwtModule.register({
-      global: true,
-      secret: 'jwtConstants.secret',
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '1d' },
+      }),
+      inject: [ConfigService],
     }),
     PassportModule,
     forwardRef(() => UserModule),
