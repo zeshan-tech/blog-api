@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -49,7 +49,7 @@ export class PostService {
       const deletedPost = await this.postModel.findOneAndDelete({ _id: postId, user: userId });
 
       if (!deletedPost) {
-        throw new Error('Invalid post specified');
+        throw new NotFoundException('Invalid post specified');
       }
 
       return { isSuccess: true };
@@ -61,9 +61,10 @@ export class PostService {
   async updatePost(input: UpdatePostInputDto, postId: string, userId: string): Promise<SuccessOutput> {
     try {
       const deletedPost = await this.postModel.findOneAndUpdate({ _id: postId, user: userId }, input);
+      await this.gridFsService.deleteContentById(deletedPost.contentFileId);
 
       if (!deletedPost) {
-        throw new Error('Invalid post specified');
+        throw new NotFoundException('Invalid post specified');
       }
 
       return { isSuccess: true };

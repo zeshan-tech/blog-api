@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/commo
 import { MongoClient, GridFSBucket, ObjectId } from 'mongodb';
 import * as fs from 'fs';
 import { ConfigService } from '@nestjs/config';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class GridFsService implements OnModuleInit, OnModuleDestroy {
@@ -29,7 +30,7 @@ export class GridFsService implements OnModuleInit, OnModuleDestroy {
       fs.writeFileSync(fileName, binaryData);
 
       const readStream = fs.createReadStream(fileName);
-      const uploadStream = this.gridFSBucket.openUploadStream('content.txt');
+      const uploadStream = this.gridFSBucket.openUploadStream(`content.${uuid()}.txt`);
       readStream.pipe(uploadStream);
 
       const uploadedFileId = await new Promise<string>((resolve, reject) => {

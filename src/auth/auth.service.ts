@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/schema/user.schema';
@@ -7,9 +7,13 @@ import { User } from '../user/schema/user.schema';
 export class AuthService {
   constructor(private readonly jwtService: JwtService, private readonly userService: UserService) {}
 
-  async authenticateUser(email: string): Promise<void> {
+  async authenticateUser(_id: string): Promise<void> {
     try {
-      await this.userService.getByEmail(email);
+      const userExist = await this.userService.isUserExistById(_id);
+
+      if (!userExist) {
+        throw new UnauthorizedException('Invalid authorization specified');
+      }
     } catch (error) {
       throw new Error(error);
     }

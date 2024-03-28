@@ -23,7 +23,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('Invalid authorization specified');
     }
 
-    await this.authService.authenticateUser(tokenUser.email);
+    await this.authService.authenticateUser(tokenUser._id);
 
     return true;
   }

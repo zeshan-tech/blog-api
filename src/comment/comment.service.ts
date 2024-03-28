@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentInputDto, UpdateCommentInputDto } from './dto/CommentInput.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Comment } from './schema/comment.schema';
@@ -39,7 +39,7 @@ export class CommentService {
       const deletedComment = await this.commentModel.findOneAndDelete({ _id: commentId, user: userId });
 
       if (!deletedComment) {
-        throw new Error('Invalid comment specified');
+        throw new NotFoundException('Invalid comment specified');
       }
 
       return { isSuccess: true };

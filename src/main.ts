@@ -4,7 +4,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 
 const logger = new Logger('main.ts');
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8081;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

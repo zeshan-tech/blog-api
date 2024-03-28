@@ -146,6 +146,15 @@ export class UserService {
     }
   }
 
+  async isUserExistById(_id: string): Promise<boolean> {
+    try {
+      const user = await this.userModel.findById({ _id });
+      return !!user;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   async getUserById(_id: string): Promise<User> {
     try {
       const user = await this.userModel.findById(_id);
