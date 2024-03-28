@@ -1,5 +1,7 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as fs from 'fs';
+import { v4 as uuid } from 'uuid';
 import * as request from 'supertest';
 import post from '../test/data/post';
 import user from '../test/data/user';
@@ -12,7 +14,7 @@ import { Post } from './schema/post.schema';
 describe('PostController (Integration)', () => {
   const server = new TestServer();
   let token: string;
-  let currentPostId: string;
+  const currentPostId: string = post[0]._id.toString();
 
   beforeAll(async () => {
     await server.setup([UserModule, PostModule]);
@@ -21,14 +23,34 @@ describe('PostController (Integration)', () => {
     const userModel = server.app.get<Model<User>>(getModelToken(User.name));
     await server.insertTestData(userModel, user);
     const postModel = server.app.get<Model<Post>>(getModelToken(Post.name));
-    const createdPost = await server.insertTestData(postModel, post);
-    currentPostId = createdPost[0]._id.toString();
+    post[0].contentFileId = await saveContent();
+    await server.insertTestData(postModel, post);
     token = `Bearer ${token}`;
   }, 100000);
 
   afterAll(async () => {
     await server.close();
   }, 100000);
+
+  const saveContent = async (): Promise<string> => {
+    const fileName = 'content.txt';
+    const content = Buffer.from('content', 'utf-8');
+    fs.writeFileSync(fileName, content);
+
+    const readStream = fs.createReadStream(fileName);
+    const uploadStream = server.gridFSBucket.openUploadStream(`content.${uuid()}.txt`);
+    readStream.pipe(uploadStream);
+
+    const uploadedFileId = await new Promise<string>((resolve, reject) => {
+      uploadStream.on('finish', () => {
+        fs.unlinkSync(fileName);
+        resolve(uploadStream.id.toString());
+      });
+      uploadStream.on('error', reject);
+    });
+
+    return uploadedFileId;
+  };
 
   it('should create a post', async () => {
     const input = {

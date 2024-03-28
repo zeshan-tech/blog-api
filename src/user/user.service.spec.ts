@@ -34,7 +34,7 @@ describe('UserService', () => {
       email: 'test@example.com',
       password: 'password',
       fullname: 'test name',
-      emailVerified: false,
+      emailVerified: true,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

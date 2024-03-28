@@ -11,11 +11,10 @@ import * as request from 'supertest';
 describe('PostController (Integration)', () => {
   const server = new TestServer();
   let token: string;
-  let mockEmail = '';
+  const mockEmail = user[0].email;
 
   beforeAll(async () => {
     await server.setup([UserModule]);
-    mockEmail = `${uuid()}@example.com`;
     const email = await server.authManager.insertUser();
     token = await server.authManager.generateToken(email);
     const userModel = server.app.get<Model<User>>(getModelToken(User.name));
@@ -29,7 +28,7 @@ describe('PostController (Integration)', () => {
 
   it('should register a user', async () => {
     const input: UserRegisterInputDto = {
-      Email: mockEmail,
+      Email: `user${uuid()}@example.com`,
       Fullname: 'Fullname',
       Password: 'password',
     };

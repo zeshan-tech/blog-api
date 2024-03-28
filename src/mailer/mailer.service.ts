@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailerService {
-  constructor(private readonly sendGrid: SendGridService, private readonly configService: ConfigService) { }
+  constructor(private readonly sendGrid: SendGridService, private readonly configService: ConfigService) {}
 
   async sendOTP(email: string, otp: string): Promise<void> {
     try {

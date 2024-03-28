@@ -5,7 +5,7 @@ const users = [
     fullname: 'fullname',
     email: `user${uuid()}@example.com`,
     password: 'password',
-    emailVerified: false,
+    emailVerified: true,
   },
 ];
 

@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MailerService } from './mailer.service';
-import { MailerService as NMailerService } from '@nestjs-modules/mailer';
+import { SendGridService } from '@anchan828/nest-sendgrid';
+import { ConfigService } from '@nestjs/config';
 
-const nMailerServiceMock = {
-  sendMail: jest.fn(),
+const sendGridService = {
+  send: jest.fn(),
 };
 
 describe('MailerService', () => {
@@ -11,7 +12,7 @@ describe('MailerService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MailerService, { provide: NMailerService, useValue: nMailerServiceMock }],
+      providers: [MailerService, ConfigService, { provide: SendGridService, useValue: sendGridService }],
     }).compile();
 
     service = module.get<MailerService>(MailerService);
@@ -25,9 +26,9 @@ describe('MailerService', () => {
     const email = 'test@example.com';
     const OTP = '123456';
 
-    jest.spyOn(nMailerServiceMock, 'sendMail').mockResolvedValueOnce(null);
+    jest.spyOn(sendGridService, 'send').mockResolvedValueOnce(null);
 
     await service.sendOTP(email, OTP);
-    expect(nMailerServiceMock.sendMail).toHaveBeenCalled();
+    expect(sendGridService.send).toHaveBeenCalled();
   });
 });

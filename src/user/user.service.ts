@@ -58,6 +58,7 @@ export class UserService {
   async login(input: LoginInputDto): Promise<User> {
     const user = await this.getByEmail(input.Email);
     if (!user) throw new NotFoundException('Invalid credentials specified');
+    if (!user.emailVerified) throw new NotFoundException('Email not verified');
 
     const isMatched = onComparePassword(user.password, input.Password);
     if (!isMatched) throw new NotFoundException('Invalid credentials specified');
