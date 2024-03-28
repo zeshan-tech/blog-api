@@ -21,6 +21,10 @@ export class PostService {
     return { _id: createdPost._id.toString() };
   }
 
+  async getPostsByUserId(userId: string): Promise<Post[]> {
+    return this.postModel.find({ user: userId });
+  }
+
   async getAllPosts(): Promise<Post[]> {
     const posts = await this.postModel.find();
 

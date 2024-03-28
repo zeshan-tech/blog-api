@@ -9,6 +9,7 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Post } from './schema/post.schema';
 import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
 import * as request from 'supertest';
+import { CommentModule } from '../comment/comment.module';
 
 describe('PostController (Integration)', () => {
   const server = new TestServer();
@@ -16,7 +17,7 @@ describe('PostController (Integration)', () => {
   let currentPostId: string;
 
   beforeAll(async () => {
-    await server.setup([UserModule, PostModule]);
+    await server.setup([UserModule, PostModule, CommentModule]);
     const email = await server.authManager.insertUser();
     token = await server.authManager.generateToken(email);
     const userModel = server.app.get<Model<User>>(getModelToken(User.name));

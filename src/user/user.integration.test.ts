@@ -7,6 +7,8 @@ import { getModelToken } from '@nestjs/mongoose';
 import { ChangeEmailInputDto, UpdateUserInputDto, UserRegisterInputDto } from './dto/UserInput.dto';
 import { v4 as uuid } from 'uuid';
 import * as request from 'supertest';
+import { PostModule } from '../post/post.module';
+import { CommentModule } from '../comment/comment.module';
 
 describe('PostController (Integration)', () => {
   const server = new TestServer();
@@ -14,7 +16,7 @@ describe('PostController (Integration)', () => {
   let mockEmail = '';
 
   beforeAll(async () => {
-    await server.setup([UserModule]);
+    await server.setup([UserModule, PostModule, CommentModule]);
     const email = await server.authManager.insertUser();
     token = await server.authManager.generateToken(email);
     const userModel = server.app.get<Model<User>>(getModelToken(User.name));

@@ -168,14 +168,14 @@ describe('UserService', () => {
       const result = await service.deleteUser(userId);
 
       expect(result).toEqual({ isSuccess: true });
-      expect(userModelMock.findOneAndDelete).toHaveBeenCalledWith(userId);
+      expect(userModelMock.findOneAndDelete).toHaveBeenCalledWith({ _id: userId });
     });
 
     it('should throw Error', async () => {
       const invalidUserId = 'invalid_id';
 
       await expect(service.deleteUser(invalidUserId)).rejects.toThrow();
-      expect(userModelMock.findOneAndDelete).toHaveBeenCalledWith(invalidUserId);
+      expect(userModelMock.findOneAndDelete).toHaveBeenCalledWith({ _id: invalidUserId });
     });
   });
 
