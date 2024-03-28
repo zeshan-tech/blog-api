@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
   imports: [
     SendGridModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
-        apikey: configService.get<string>('SEND_GRID_API_KEY')
+        apikey: configService.get<string>('SEND_GRID_API_KEY'),
       }),
       inject: [ConfigService],
     }),
@@ -15,4 +15,4 @@ import { ConfigService } from '@nestjs/config';
   providers: [MailerService],
   exports: [MailerService],
 })
-export class MailerModule { }
+export class MailerModule {}

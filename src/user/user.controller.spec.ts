@@ -7,6 +7,7 @@ import {
   ForgotPasswordInputDto,
   LoginInputDto,
   ResetPasswordInputDto,
+  SendOTPInputDto,
   UpdateUserInputDto,
   UserRegisterInputDto,
   VerifyEmailInputDto,
@@ -26,6 +27,8 @@ const userServiceMock = {
   updateUser: jest.fn(),
   forgotPassword: jest.fn(),
   resetPassword: jest.fn(),
+  myInfo: jest.fn(),
+  sendOTP: jest.fn(),
 };
 
 // Mock dependencies
@@ -165,6 +168,31 @@ describe('User Controller', () => {
 
       const result = await controller.resetPassword(input);
       expect(result.isSuccess).toBe(true);
+    });
+  });
+
+  describe('myInfo', () => {
+    it('should update user', async () => {
+      const input: CurrentUserType = { email: 'test@example.com', _id: '100' };
+      const expectingUser = { ...userMock };
+      delete expectingUser['password'];
+
+      jest.spyOn(userServiceMock, 'myInfo').mockResolvedValueOnce(expectingUser);
+
+      const result = await controller.myInfo(input);
+
+      expect(result).toBe(expectingUser);
+    });
+  });
+
+  describe('sendOTP', () => {
+    it('should update user', async () => {
+      const input: SendOTPInputDto = { Email: 'test@example.com' };
+      jest.spyOn(userServiceMock, 'sendOTP').mockResolvedValueOnce({ message: 'Check your mailbox' });
+
+      const result = await controller.sendOTP(input);
+
+      expect(result.message).toBe('Check your mailbox');
     });
   });
 });

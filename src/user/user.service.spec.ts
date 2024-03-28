@@ -344,4 +344,90 @@ describe('UserService', () => {
       expect(redisServiceMock.getValueFromTempStore).toHaveBeenCalledWith(email);
     });
   });
+
+  describe('resetPassword', () => {
+    it('should reset password with valid OTP and new password', async () => {
+      const input = { Email: 'test@example.com', OTP: 'validOTP', Password: 'newPassword' };
+      const expectedResult = { isSuccess: true };
+
+      jest.spyOn(service, 'validateOTP').mockResolvedValueOnce(undefined);
+      jest.spyOn(service['userModel'], 'findOneAndUpdate').mockResolvedValueOnce(undefined);
+
+      const result = await service.resetPassword(input);
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should throw an error with invalid OTP provided', async () => {
+      const input = { Email: 'test@example.com', OTP: 'invalidOTP', Password: 'newPassword' };
+
+      jest.spyOn(service, 'validateOTP').mockRejectedValueOnce(new Error('Invalid OTP'));
+
+      await expect(service.resetPassword(input)).rejects.toThrow();
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('should send OTP to  email', async () => {
+      const input = { Email: 'test@example.com' };
+      const expectedResult = { message: 'Check your mailbox' };
+
+      jest.spyOn(service, 'getByEmail').mockResolvedValueOnce(userMock as any);
+      jest.spyOn(service, 'storeAndSendOTP').mockResolvedValueOnce(undefined);
+
+      const result = await service.forgotPassword(input);
+
+      expect(result).toEqual(expectedResult);
+    });
+
+    it('should throw an error with non-existent email provided', async () => {
+      const input = { Email: 'nonexistent@example.com' };
+
+      jest.spyOn(service, 'getByEmail').mockResolvedValueOnce(null);
+
+      await expect(service.forgotPassword(input)).rejects.toThrow();
+    });
+  });
+
+  describe('sendOTP', () => {
+    it('should send OTP to  email', async () => {
+      const input = { Email: 'test@example.com' };
+      const expectedResult = { message: 'Check your mailbox' };
+
+      jest.spyOn(service, 'storeAndSendOTP').mockResolvedValueOnce(undefined);
+
+      const result = await service.sendOTP(input);
+
+      expect(result).toEqual(expectedResult);
+    });
+  });
+
+  describe('myInfo', () => {
+    it('should retrieve user information for  user ID', async () => {
+      const userId = 'user_id';
+
+      const expectingUser = { ...userMock };
+      delete expectingUser['password'];
+
+      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce({ ...userMock, toJSON: () => userMock });
+
+      const result = await service.myInfo(userId);
+
+      expect(result).toEqual(expectingUser);
+    });
+
+    it('should throw an error with invalid user ID provided', async () => {
+      const userId = 'invalidUserId';
+
+      jest.spyOn(service['userModel'], 'findById').mockResolvedValueOnce(null);
+
+      await expect(service.myInfo(userId)).rejects.toThrow(/* Expected Error Type */);
+    });
+
+    it('should throw an error with empty user ID provided', async () => {
+      const userId = '';
+
+      await expect(service.myInfo(userId)).rejects.toThrow(/* Expected Error Type */);
+    });
+  });
 });
