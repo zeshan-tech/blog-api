@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { PostService } from './post.service';
 import { JwtAuthGuard } from '../auth/guards/JwtAuth.guard';
-import { CreatePostInputDto } from './dto/PostInput.dto';
+import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
 import { CurrentUser } from '../decorator/current-user.decorator';
 
 @Controller('post')
@@ -32,7 +32,7 @@ export class PostController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':_id')
-  async updatePost(@Param('_id') _id: string, @Body() input: CreatePostInputDto, @CurrentUser() currentUser: CurrentUserType) {
+  async updatePost(@Param('_id') _id: string, @Body() input: UpdatePostInputDto, @CurrentUser() currentUser: CurrentUserType) {
     return this.postService.updatePost(input, _id, currentUser._id);
   }
 }

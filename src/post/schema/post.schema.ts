@@ -10,10 +10,7 @@ export class Post extends BaseSchema {
   title: string;
 
   @Prop()
-  content: string;
-
-  @Prop()
-  image_url: string;
+  contentFileId: string;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
   comments: Comment[];

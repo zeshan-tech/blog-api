@@ -1,19 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostInputDto, UpdatePostInputDto } from './dto/PostInput.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post } from './schema/post.schema';
 import { Model } from 'mongoose';
 import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
+import { Post } from './schema/post.schema';
+import { GridFsService } from './grid-fs.service';
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Post.name) private postModel: Model<Post>) {}
+  constructor(@InjectModel(Post.name) private postModel: Model<Post>, private readonly gridFsService: GridFsService) {}
 
   async createPost(input: CreatePostInputDto, userId: string): Promise<IdOutput> {
     try {
+      const contentFileId = await this.gridFsService.saveContentToGridFS(input.Content);
+
       const post: Partial<Post> = {
         title: input.Title,
-        content: input.Content,
+        contentFileId: contentFileId,
         user: userId,
       };
 
