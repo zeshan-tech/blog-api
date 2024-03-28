@@ -8,6 +8,7 @@ import {
   UpdateUserInputDto,
   ForgotPasswordInputDto,
   ResetPasswordInputDto,
+  SendOTPInputDto,
 } from './dto/UserInput.dto';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
@@ -34,7 +35,7 @@ export class UserService {
     const otp = onGenerateOTP(6);
     await this.storeAndSendOTP(input.Email, otp);
 
-    return { message: 'Check your email' };
+    return { message: 'Check your mailbox' };
   }
 
   async storeAndSendOTP(email: string, otp: string): Promise<void> {
@@ -50,6 +51,21 @@ export class UserService {
     await this.updateVerifyEmailStatus(input.Email);
 
     return { isSuccess: true };
+  }
+
+  async sendOTP(input: SendOTPInputDto): Promise<MessageOutput> {
+    const otp = onGenerateOTP(6);
+    await this.storeAndSendOTP(input.Email, otp);
+
+    return { message: 'Check your mailbox' };
+  }
+
+  async myInfo(userId: string): Promise<Omit<User, 'password'>> {
+    const user = await this.userModel.findById(userId);
+
+    const { password, ...userInfo } = user.toJSON();
+
+    return userInfo;
   }
 
   async login(input: LoginInputDto): Promise<User> {
@@ -86,7 +102,7 @@ export class UserService {
 
     await this.userModel.findOneAndUpdate({ _id }, { $set: { verifyEmail: false, email: input.NewEmail } });
 
-    return { message: 'Please verify your new email address.' };
+    return { message: 'Check your mailbox' };
   }
 
   async changePassword(input: ChangePasswordInputDto, _id: string): Promise<SuccessOutput> {

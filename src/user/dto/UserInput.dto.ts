@@ -16,6 +16,12 @@ export class UserRegisterInputDto {
   Password: string;
 }
 
+export class SendOTPInputDto {
+  @IsNotEmpty()
+  @IsEmail()
+  Email: string;
+}
+
 export class VerifyEmailInputDto {
   @IsNotEmpty()
   @IsEmail()

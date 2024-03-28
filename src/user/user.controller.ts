@@ -9,6 +9,7 @@ import {
   LoginInputDto,
   ForgotPasswordInputDto,
   ResetPasswordInputDto,
+  SendOTPInputDto,
 } from './dto/UserInput.dto';
 import { AuthService } from '../auth/auth.service';
 import { CurrentUser } from '../decorator/current-user.decorator';
@@ -26,6 +27,17 @@ export class UserController {
   @Post('verify-email')
   verifyEmail(@Body() input: VerifyEmailInputDto) {
     return this.userService.verifyEmail(input);
+  }
+
+  @Post('send-otp')
+  sendOTP(@Body() input: SendOTPInputDto) {
+    return this.userService.sendOTP(input);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('my-info')
+  myInfo(@CurrentUser() currentUser: CurrentUserType) {
+    return this.userService.myInfo(currentUser._id);
   }
 
   @Post('login')

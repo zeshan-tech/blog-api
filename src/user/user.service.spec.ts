@@ -75,7 +75,7 @@ describe('UserService', () => {
 
       const result = await service.register(input);
 
-      expect(result).toEqual({ message: 'Check your email' });
+      expect(result).toEqual({ message: 'Check your mailbox' });
       expect(redisServiceMock.storeValueInTempStore).toHaveBeenCalled();
       expect(mailerServiceMock.sendOTP).toHaveBeenCalled();
     });
