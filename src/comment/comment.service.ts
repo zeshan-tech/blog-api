@@ -4,12 +4,19 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Comment } from './schema/comment.schema';
 import { Model, Types } from 'mongoose';
 import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
+import { PostService } from 'src/post/post.service';
 
 @Injectable()
 export class CommentService {
-  constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>) {}
+  constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>, private readonly postService: PostService) {}
 
   async createComment(input: CreateCommentInputDto, userId: string): Promise<IdOutput> {
+    await this.postService.getPostById(input.PostId);
+
+    if (input.CommentId) {
+      await this.getCommentById(input.CommentId);
+    }
+
     const comment: Partial<Comment> = {
       text: input.Text,
       user: userId,
@@ -25,6 +32,16 @@ export class CommentService {
   async getCommentsByPostId(postId: string): Promise<Comment[]> {
     return this.commentModel.find({ post: new Types.ObjectId(postId) as any });
   }
+
+  async getCommentById(_id: string): Promise<Comment> {
+    const comment = await this.commentModel.findById({ _id });
+    if (!comment) {
+      throw new NotFoundException('Invalid comment specified');
+    }
+
+    return comment;
+  }
+
   async getReplies(_id: string): Promise<Comment[]> {
     return this.commentModel.find({ parentComment: _id });
   }
@@ -39,24 +56,11 @@ export class CommentService {
     return { isSuccess: true };
   }
 
-  async deleteByPostId(postId: string): Promise<SuccessOutput> {
-    try {
-      // Assuming this.postModel is your Post model
-      const deletedComments = await this.commentModel.deleteMany({ postId });
-
-      if (deletedComments.deletedCount === 0) {
-        throw new NotFoundException('No comments found for the specified post');
-      }
-
-      return { isSuccess: true };
-    } catch (error) {
-      // Handle any errors appropriately
-      throw new Error('An error occurred while deleting comments for the post');
-    }
-  }
-
   async updateComment(input: UpdateCommentInputDto, commentId: string, userId: string): Promise<SuccessOutput> {
-    await this.commentModel.findOneAndUpdate({ _id: commentId, user: userId }, { text: input.Text });
+    const updatedComment = await this.commentModel.findOneAndUpdate({ _id: commentId, user: userId }, { text: input.Text });
+    if (!updatedComment) {
+      throw new NotFoundException('Invalid comment specified');
+    }
 
     return { isSuccess: true };
   }

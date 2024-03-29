@@ -33,6 +33,9 @@ export class PostService {
 
   async getPostById(_id: string): Promise<Post> {
     const post = await this.postModel.findOne({ _id });
+    if (!post) {
+      throw new NotFoundException('Invalid post specified');
+    }
 
     return post;
   }
