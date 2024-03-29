@@ -4,7 +4,6 @@ import { Comment } from './schema/comment.schema';
 import { Model, Types } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { CreateCommentInputDto, UpdateCommentInputDto } from './dto/CommentInput.dto';
-import { Post } from '../post/schema/post.schema';
 
 describe('CommentService', () => {
   let service: CommentService;
