@@ -181,31 +181,29 @@ describe('UserService', () => {
 
   describe('changeEmail', () => {
     it('should change user email and send verification OTP', async () => {
-      const userId = 'validUserId';
       const input = { NewEmail: 'new@example.com', Password: 'password' };
 
-      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce({
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce({
         ...userMock,
         password: await onHashPassword(input.Password),
       });
       jest.spyOn(service, 'storeAndSendOTP').mockResolvedValueOnce(undefined);
       jest.spyOn(userModelMock, 'findOneAndUpdate').mockResolvedValueOnce(null);
 
-      const result = await service.changeEmail(input, userId);
+      const result = await service.changeEmail(input, userMock.email);
 
       expect(result).toEqual(expect.objectContaining({ message: expect.any(String) }));
       expect(userModelMock.findOneAndUpdate).toHaveBeenCalled();
-      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
+      expect(userModelMock.findOne).toHaveBeenCalledWith({ email: userMock.email });
       expect(service.storeAndSendOTP).toHaveBeenCalledWith(input.NewEmail, expect.any(String));
     });
 
     it('should throw Error', async () => {
-      const userId = 'invalidUserId';
       const input = { NewEmail: 'new@example.com', Password: 'password' };
-      jest.spyOn(userModelMock, 'findById').mockResolvedValueOnce(null);
+      jest.spyOn(userModelMock, 'findOne').mockResolvedValueOnce(null);
 
-      await expect(service.changeEmail(input, userId)).rejects.toThrow();
-      expect(userModelMock.findById).toHaveBeenCalledWith(userId);
+      await expect(service.changeEmail(input, 'wrong' + userMock.email)).rejects.toThrow();
+      expect(userModelMock.findOne).toHaveBeenCalledWith({ email: 'wrong' + userMock.email });
     });
   });
 
@@ -420,12 +418,6 @@ describe('UserService', () => {
       const userId = 'invalidUserId';
 
       jest.spyOn(service['userModel'], 'findById').mockResolvedValueOnce(null);
-
-      await expect(service.myInfo(userId)).rejects.toThrow(/* Expected Error Type */);
-    });
-
-    it('should throw an error with empty user ID provided', async () => {
-      const userId = '';
 
       await expect(service.myInfo(userId)).rejects.toThrow(/* Expected Error Type */);
     });

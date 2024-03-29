@@ -51,13 +51,11 @@ export class PostService {
   }
 
   async updatePost(input: UpdatePostInputDto, postId: string, userId: string): Promise<SuccessOutput> {
-    let contentFileId: string;
-    const post = await this.postModel.findById(postId);
+    const updatedPost = await this.postModel.findOneAndUpdate({ _id: postId, user: userId }, { title: input.Title, content: input.Content });
 
-    if (!post) {
+    if (!updatedPost) {
       throw new NotFoundException('Invalid post specified');
     }
-    await this.postModel.findOneAndUpdate({ _id: postId, user: userId, ...(input.Content ? { contentFileId } : null) }, input);
 
     return { isSuccess: true };
   }
