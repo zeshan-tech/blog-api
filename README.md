@@ -66,6 +66,9 @@ To start the project with Docker Compose, run the following command:
 ```bash
 docker-compose up
 ```
+<b>(Make sure you also install "docker-credential-helper" and "docker-compose")</b>
+
+
 For more information on installing Docker Compose, refer to the [official installation guide](https://docs.docker.com/compose/install/).
 
 
