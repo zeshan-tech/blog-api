@@ -74,36 +74,20 @@ $ yarn run test:cov
 
 
 ## APIs
+## APIs
 User Management
 ```bash
-# unit tests
-$ yarn run test
-# test coverage
-$ yarn run test:cov
-
-
-# Register:
-$ POST /api/user/register
-# Login:
-$ POST /api/user/login
-# Email Verification:
-$ GET /api/user/verify-email/:verificationToken
-# My Info:
-$ GET /api/user/me
-# Send OTP:
-$ POST /api/user/send-otp
-# Forgot Password:
-$ POST /api/user/forgot-password
-# Reset Password:
-$ POST /api/user/reset-password
-# Delete User:
-$ DELETE /api/user/delete
-# Change Password:
-$ POST /api/user/change-password
-# Update User:
-$ PUT /api/user/update
-# Change Email:
-$ POST /api/user/change-email
+Register: POST /api/user/register
+Login: POST /api/user/login
+Email Verification: GET /api/user/verify-email/:verificationToken
+My Info: GET /api/user/me
+Send OTP: POST /api/user/send-otp
+Forgot Password: POST /api/user/forgot-password
+Reset Password: POST /api/user/reset-password
+Delete User: DELETE /api/user/delete
+Change Password: POST /api/user/change-password
+Update User: PUT /api/user/update
+Change Email: POST /api/user/change-email
 ```
 
 
