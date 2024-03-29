@@ -62,7 +62,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Put('change-email')
   changeEmail(@Body() input: ChangeEmailInputDto, @CurrentUser() currentUser: CurrentUserType) {
-    return this.userService.changeEmail(input, currentUser._id);
+    return this.userService.changeEmail(input, currentUser.email);
   }
 
   @UseGuards(JwtAuthGuard)

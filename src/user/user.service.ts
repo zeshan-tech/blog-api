@@ -88,8 +88,8 @@ export class UserService {
     return { isSuccess: true };
   }
 
-  async changeEmail(input: ChangeEmailInputDto, _id: string): Promise<MessageOutput> {
-    const user = await this.userModel.findById(_id);
+  async changeEmail(input: ChangeEmailInputDto, email: string): Promise<MessageOutput> {
+    const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new NotFoundException('Invalid user specified!');
     }
@@ -100,7 +100,7 @@ export class UserService {
     const otp = onGenerateOTP(6);
     await this.storeAndSendOTP(input.NewEmail, otp);
 
-    await this.userModel.findOneAndUpdate({ _id }, { $set: { emailVerified: false, email: input.NewEmail } });
+    await this.userModel.findOneAndUpdate({ email }, { $set: { emailVerified: false, email: input.NewEmail } });
 
     return { message: 'Check your mailbox' };
   }
