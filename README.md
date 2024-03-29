@@ -1,8 +1,12 @@
+
+# Quillpad (blog api)
+
+
+
+
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-
+[Quillpad](https://github.com/zeshan-tech/quillpad) is BE blog app which includes User Management | Post CRUD | comments for posts
 
 
 ## Requirements
