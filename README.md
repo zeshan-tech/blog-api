@@ -90,15 +90,6 @@ pnpm test
 
 ## Contributors
 
-- [Your Name](https://github.com/your-username)
+- [Zeshan Shakil](https://github.com/zeshan-tech)
 
 Feel free to contribute by opening issues or creating pull requests. Any feedback is welcome!
-
-```
-
-Replace `[API documentation link]` with the link to your API documentation.
-
-For badges, replace `username` and `repo` with your GitHub username and repository name, respectively. Ensure to replace `link_to_logo` with the link to your app logo.
-
-This README includes badges for license, build status, dependencies status, and test coverage. It also includes sections for requirements, dependencies installation, starting the project, environment variables, Docker Compose, APIs, test cases, and contributors.
-```
