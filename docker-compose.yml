@@ -25,7 +25,7 @@ services:
       - SEND_GRID_API_KEY=${SEND_GRID_API_KEY}
       - SEND_GRID_FROM_EMAIL=${SEND_GRID_FROM_EMAIL}
     ports:
-      - '8080:8080'
+      - "${PORT}:${PORT}"
     depends_on:
       - mongodb
 
