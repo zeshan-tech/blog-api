@@ -77,7 +77,7 @@ $ yarn run test:cov
 ## APIs
 User Management
 ```bash
-Register: POST /api/user/register
+*Register*: POST /api/user/register
 Login: POST /api/user/login
 Email Verification: GET /api/user/verify-email/:verificationToken
 My Info: GET /api/user/me
