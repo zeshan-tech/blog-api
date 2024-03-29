@@ -100,7 +100,7 @@ export class UserService {
     const otp = onGenerateOTP(6);
     await this.storeAndSendOTP(input.NewEmail, otp);
 
-    await this.userModel.findOneAndUpdate({ _id }, { $set: { verifyEmail: false, email: input.NewEmail } });
+    await this.userModel.findOneAndUpdate({ _id }, { $set: { emailVerified: false, email: input.NewEmail } });
 
     return { message: 'Check your mailbox' };
   }
