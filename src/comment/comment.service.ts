@@ -4,15 +4,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Comment } from './schema/comment.schema';
 import { Model, Types } from 'mongoose';
 import { IdOutput, SuccessOutput } from '../common/dto/CommonOutput.dto';
-import { PostService } from 'src/post/post.service';
 
 @Injectable()
 export class CommentService {
-  constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>, private readonly postService: PostService) {}
+  constructor(@InjectModel(Comment.name) private commentModel: Model<Comment>) {}
 
   async createComment(input: CreateCommentInputDto, userId: string): Promise<IdOutput> {
-    await this.postService.getPostById(input.PostId);
-
     if (input.CommentId) {
       await this.getCommentById(input.CommentId);
     }

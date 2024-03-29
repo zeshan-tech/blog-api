@@ -4,6 +4,7 @@ import { Comment } from './schema/comment.schema';
 import { Model, Types } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { CreateCommentInputDto, UpdateCommentInputDto } from './dto/CommentInput.dto';
+import { Post } from '../post/schema/post.schema';
 
 describe('CommentService', () => {
   let service: CommentService;
@@ -27,6 +28,7 @@ describe('CommentService', () => {
             find: jest.fn(),
             findOne: jest.fn(),
             create: jest.fn(),
+            findById: jest.fn(),
             findOneAndUpdate: jest.fn(),
             findOneAndDelete: jest.fn(),
           },
@@ -94,8 +96,7 @@ describe('CommentService', () => {
       const input: CreateCommentInputDto = {
         Text: 'Test comment',
         PostId: '100',
-        CommentId: '99',
-      };
+      } as CreateCommentInputDto;
 
       jest.spyOn(mockCommentModel, 'create').mockImplementationOnce(() => Promise.resolve(commentMock as any));
 
@@ -104,6 +105,26 @@ describe('CommentService', () => {
       // Assertion
       expect(result && typeof result === 'object').toBe(true);
       expect(result._id).toEqual(commentMock._id.toString());
+    });
+  });
+
+  // DONE
+  describe('getCommentById', () => {
+    it('should throw an error if database fails to retrieve comment', async () => {
+      jest.spyOn(mockCommentModel, 'find').mockRejectedValueOnce(new Error());
+
+      await expect(service.getCommentById('')).rejects.toThrow();
+    });
+
+    it('should get post by _id', async () => {
+      const postId = '100';
+
+      jest.spyOn(mockCommentModel, 'findById').mockResolvedValue(commentMock as any);
+
+      const result = await service.getCommentById(postId);
+
+      // Assertion
+      expect(result.text).toEqual(commentMock.text);
     });
   });
 
