@@ -27,86 +27,55 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Installation
-This project is a [brief description of your project].
-
-## Requirements
-
-Before running this project, ensure you have the following requirements:
-
-- Node.js installed on your machine (vX.X.X)
-- MongoDB installed and running on your system
-- [Other dependencies, if any]
-
-## Dependencies Installation
-
-You can install dependencies using one of the following package managers:
-
-### Using npm:
 
 ```bash
-npm install
+$ yarn install
 ```
-````
 
-### Using Yarn:
+## Running the app
 
 ```bash
-yarn install
+# development
+$ yarn run start
+
+# watch mode
+$ yarn run start:dev
+
+# production mode
+$ yarn run start:prod
 ```
 
-### Using pnpm:
+## Test
 
 ```bash
-pnpm install
+# unit tests
+$ yarn run test
+
+# e2e tests
+$ yarn run test:e2e
+
+# test coverage
+$ yarn run test:cov
 ```
 
-## Starting the Project
+## Support
 
-To start the project in development mode, run the following command:
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-```bash
-yarn start:dev
-```
+## Stay in touch
 
-## Environment Variables
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-Ensure you have a `.env` file in the root directory of the project with the following variables:
+## License
 
-```dotenv
-PORT=8080
-# Add other environment variables here
-```
+Nest is [MIT licensed](LICENSE).
 
-## Docker Compose (Optional)
 
-You can also run the project using Docker Compose. Ensure you have Docker installed on your system.
+is you getting this error
+- error getting credentials - err: exec: "docker-credential-desktop": executable file not found in $PATH, out
+ then 
+sudo vim ~/.docker/config.json
 
-To start the project with Docker Compose, run the following command:
-
-```bash
-docker-compose up
-```
-
-For more information on installing Docker Compose, refer to the [official installation guide](https://docs.docker.com/compose/install/).
-
-## APIs
-
-[API documentation link]
-
-## Test Cases
-
-To run test cases, use the following command:
-
-```bash
-npm test
-# or
-yarn test
-# or
-pnpm test
-```
-
-## Contributors
-
-- [Zeshan Shakil](https://github.com/zeshan-tech)
-
-Feel free to contribute by opening issues or creating pull requests. Any feedback is welcome!
+rename "credsStore" to "credStore"
