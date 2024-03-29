@@ -1,81 +1,104 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+Sure, here's an updated README file with the additions you requested:
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+````markdown
+# Project Name
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+![App Logo](link_to_logo)
 
-## Description
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/travis/username/repo.svg)](https://travis-ci.org/username/repo)
+[![Dependencies Status](https://img.shields.io/david/username/repo.svg)](https://david-dm.org/username/repo)
+[![Test Coverage](https://img.shields.io/codecov/c/github/username/repo.svg)](https://codecov.io/gh/username/repo)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This project is a [brief description of your project].
 
-## Installation
+## Requirements
+
+Before running this project, ensure you have the following requirements:
+
+- Node.js installed on your machine (vX.X.X)
+- MongoDB installed and running on your system
+- [Other dependencies, if any]
+
+## Dependencies Installation
+
+You can install dependencies using one of the following package managers:
+
+### Using npm:
 
 ```bash
-$ yarn install
+npm install
 ```
+````
 
-## Running the app
+### Using Yarn:
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+yarn install
 ```
 
-## Test
+### Using pnpm:
 
 ```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
+pnpm install
 ```
 
-## Support
+## Starting the Project
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+To start the project in development mode, run the following command:
 
-## Stay in touch
+```bash
+yarn start:dev
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Environment Variables
 
-## License
+Ensure you have a `.env` file in the root directory of the project with the following variables:
 
-Nest is [MIT licensed](LICENSE).
+```dotenv
+PORT=8080
+# Add other environment variables here
+```
 
+## Docker Compose (Optional)
 
-is you getting this error
-- error getting credentials - err: exec: "docker-credential-desktop": executable file not found in $PATH, out
- then 
-sudo vim ~/.docker/config.json
+You can also run the project using Docker Compose. Ensure you have Docker installed on your system.
 
-rename "credsStore" to "credStore"
+To start the project with Docker Compose, run the following command:
+
+```bash
+docker-compose up
+```
+
+For more information on installing Docker Compose, refer to the [official installation guide](https://docs.docker.com/compose/install/).
+
+## APIs
+
+[API documentation link]
+
+## Test Cases
+
+To run test cases, use the following command:
+
+```bash
+npm test
+# or
+yarn test
+# or
+pnpm test
+```
+
+## Contributors
+
+- [Your Name](https://github.com/your-username)
+
+Feel free to contribute by opening issues or creating pull requests. Any feedback is welcome!
+
+```
+
+Replace `[API documentation link]` with the link to your API documentation.
+
+For badges, replace `username` and `repo` with your GitHub username and repository name, respectively. Ensure to replace `link_to_logo` with the link to your app logo.
+
+This README includes badges for license, build status, dependencies status, and test coverage. It also includes sections for requirements, dependencies installation, starting the project, environment variables, Docker Compose, APIs, test cases, and contributors.
+```

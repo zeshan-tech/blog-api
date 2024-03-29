@@ -3,11 +3,11 @@ services:
   mongodb:
     image: mongo
     restart: always
-    container_name: quillpad-nest-api
+    container_name: quillpad-mongodb
     volumes:
       - mongodb_data:/data/db
     ports:
-      - '27017:27017'
+      - "27017:27017"
 
   app:
     build:
@@ -29,9 +29,5 @@ services:
     depends_on:
       - mongodb
 
-  prom-server:
-    image: prom/prometheus
-    ports:
-      - '9090:9090'
-    volumes:
-      - ./prometheus-config.yml:/etc/prometheus/prometheus.yml
+volumes:
+  mongodb_data:
