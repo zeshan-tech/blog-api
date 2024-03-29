@@ -2,11 +2,11 @@
 # Quillpad (blog api)
 
 
-<a href="https://nestjs.com/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009756/ph8a6wv0nrrps778fcco.png" alt="Nestjs Image" /></a>
-<a href="https://www.mongodb.com/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009753/clo5kbdsb1mlfczslpn7.png" alt="MongoDb image" /></a>
-<a href="https://www.docker.com/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009749/pebtirzmkqmputt8o0pf.png" alt="Docker imahe" /></a>
-<a href="https://www.typescriptlang.org/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009761/otj7i99gcvkj6moeok54.png" alt="Typescript image" /></a>
-<a href="https://www.typescriptlang.org/" target="_blank"><img src="https://miro.medium.com/v2/resize:fit:600/1*i37IyHf6vnhqWIA9osxU3w.png" alt="Jest image" /></a>
+<a href="https://nestjs.com/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009756/ph8a6wv0nrrps778fcco.png" width="100"  alt="Nestjs Image" /></a>
+<a href="https://www.mongodb.com/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009753/clo5kbdsb1mlfczslpn7.png" width="100"  alt="MongoDb image" /></a>
+<a href="https://www.docker.com/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009749/pebtirzmkqmputt8o0pf.png" width="100"  alt="Docker imahe" /></a>
+<a href="https://www.typescriptlang.org/" target="_blank"><img src="https://res.cloudinary.com/djvfnekle/image/upload/v1710009761/otj7i99gcvkj6moeok54.png" width="100"  alt="Typescript image" /></a>
+<a href="https://www.typescriptlang.org/" target="_blank"><img src="https://miro.medium.com/v2/resize:fit:600/1*i37IyHf6vnhqWIA9osxU3w.png" width="100"  alt="Jest image" /></a>
 
 
 ## Description
