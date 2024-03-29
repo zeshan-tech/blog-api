@@ -74,23 +74,63 @@ $ yarn run test:cov
 
 
 ## APIs
-## APIs
 User Management
 ```bash
-*Register*: POST /api/user/register
-Login: POST /api/user/login
-Email Verification: GET /api/user/verify-email/:verificationToken
-My Info: GET /api/user/me
-Send OTP: POST /api/user/send-otp
-Forgot Password: POST /api/user/forgot-password
-Reset Password: POST /api/user/reset-password
-Delete User: DELETE /api/user/delete
-Change Password: POST /api/user/change-password
-Update User: PUT /api/user/update
-Change Email: POST /api/user/change-email
+# Register
+ $ *POST* /user/register
+# Login
+ $ *POST* /user/login
+# Email Verification
+ $ *POST* /user/verify-email
+# My Info
+ $ *GET* /user/me
+# Send OTP
+ $ *POST* /user/send-otp
+# Forgot Password
+ $ *POST* /user/forgot-password
+# Reset Password
+ $ *PUT* /user/reset-password
+# Delete User
+ $ *DELETE* /user
+# Change Password
+ $ *PUT* /user/change-password
+# Update User
+ $ *PUT* /user/update
+# Change Email
+ $ *PUT* /user/change-email
 ```
 
 
+Post Management
+```bash
+# Create post
+ $ *POST* /post
+# Delete post
+ $ *DELETE* /post/:postId
+# post get by id
+ $ *GET* /post/:postId
+# post get by id
+ $ *GET* /post/by-user-id/:userId
+# Update post
+ $ *PUT* /post/:post
+# Get all posts
+ $ *GET* /post
+```
+
+
+Comment Management
+```bash
+# Get comments by post id
+ $ *GET* /comment/:postId
+# Create comment
+ $ *POST* /comment
+# Get specific comment replies
+ $ *GET* /comment/replies/:commentId
+# Update comment
+ $ *PUT* /comment/:commentId
+# Get all comments
+ $ *GET* /comment
+```
 
 
 
@@ -100,4 +140,4 @@ Change Email: POST /api/user/change-email
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Quillpad is [MIT licensed](LICENSE).

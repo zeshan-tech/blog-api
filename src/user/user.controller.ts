@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Delete, Put, UseGuards, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
   UserRegisterInputDto,
@@ -35,7 +35,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('my-info')
+  @Get('me')
   myInfo(@CurrentUser() currentUser: CurrentUserType) {
     return this.userService.myInfo(currentUser._id);
   }
