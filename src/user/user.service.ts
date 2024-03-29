@@ -114,7 +114,7 @@ export class UserService {
     const isMatched = onComparePassword(user.password, input.Password);
     if (!isMatched) throw new NotFoundException('Invalid credentials specified');
 
-    await this.userModel.findOneAndUpdate({ _id }, { $set: { password: onHashPassword(input.NewPassword) } });
+    await this.userModel.findOneAndUpdate({ _id }, { $set: { password: await onHashPassword(input.NewPassword) } });
 
     return { isSuccess: true };
   }
@@ -145,7 +145,7 @@ export class UserService {
   async resetPassword(input: ResetPasswordInputDto): Promise<SuccessOutput> {
     await this.validateOTP(input.Email, input.OTP);
 
-    await this.userModel.findOneAndUpdate({ email: input.Email }, { $set: { password: onHashPassword(input.Password) } });
+    await this.userModel.findOneAndUpdate({ email: input.Email }, { $set: { password: await onHashPassword(input.Password) } });
 
     return { isSuccess: true };
   }
